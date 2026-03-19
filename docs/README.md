@@ -20,8 +20,11 @@ pnpm docs:dev
 5. [功能闭环路径](./feature-closed-loops.md)
 6. [从 Demo 到正式项目的改造工作](./project-transition-plan.md)
 7. [后续接口需求清单](./api-requirements.md)
-8. [开发说明](./development-guide.md)
-9. [当前稳定基线](./architecture/current-stable-baseline.md)
+8. [产品需求说明](./product-requirements.md)
+9. [数据实体设计](./data-entities.md)
+10. [接口字段契约说明](./api-field-contracts.md)
+11. [开发说明](./development-guide.md)
+12. [当前稳定基线](./architecture/current-stable-baseline.md)
 
 架构参考：
 - [当前稳定基线](./architecture/current-stable-baseline.md)
