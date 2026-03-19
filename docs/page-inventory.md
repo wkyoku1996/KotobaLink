@@ -59,4 +59,4 @@
 - `pages/legacy/index/*`
 - `pages/legacy/logs/*`
 
-它们没有注册到 `app.json`，不应该当成当前正式产品页使用。
+它们没有注册到 `app.json`，当前不属于正式产品页范围。

@@ -8,12 +8,12 @@
 
 ## 1. 用户与身份
 
-核心目标：
+接口范围：
 - 识别当前用户
 - 拉取学员基础资料
 - 管理登录态
 
-建议接口：
+接口项：
 - `POST /auth/login`
 - `POST /auth/logout`
 - `GET /auth/me`
@@ -27,12 +27,12 @@
 
 ## 2. 课程目录与已报名课程
 
-核心目标：
+接口范围：
 - 展示课程列表
 - 区分可购买课程与已报名课程
 - 获取课程详情
 
-建议接口：
+接口项：
 - `GET /courses/catalog`
 - `GET /courses/catalog/:courseId`
 - `GET /students/courses`
@@ -45,12 +45,12 @@
 
 ## 3. 课表与 lesson
 
-核心目标：
+接口范围：
 - 获取当前周课表
 - 查看 lesson 详情
 - 让课表和课程内容对齐
 
-建议接口：
+接口项：
 - `GET /schedule/week`
 - `GET /schedule/day`
 - `GET /courses/:courseId/lessons`
@@ -63,12 +63,12 @@
 
 ## 4. assessment 与成长记录
 
-核心目标：
+接口范围：
 - 获取测评列表
 - 获取测评详情
 - 获取成长数据
 
-建议接口：
+接口项：
 - `GET /courses/:courseId/assessments`
 - `GET /courses/:courseId/assessments/:assessmentId`
 - `GET /students/growth/radar`
@@ -82,13 +82,13 @@
 
 ## 5. 任务与作业
 
-核心目标：
+接口范围：
 - 获取每日任务
 - 标记学习进度
 - 提交作业
 - 获取作业反馈
 
-建议接口：
+接口项：
 - `GET /tasks/daily`
 - `POST /tasks/daily/vocab/:wordId/complete`
 - `POST /tasks/daily/check-in`
@@ -102,12 +102,12 @@
 
 ## 6. 消息中心
 
-核心目标：
+接口范围：
 - 获取消息列表
 - 获取消息详情
 - 标记消息已读
 
-建议接口：
+接口项：
 - `GET /notifications`
 - `GET /notifications/:notificationId`
 - `POST /notifications/:notificationId/read`
@@ -118,12 +118,12 @@
 
 ## 7. 活动
 
-核心目标：
+接口范围：
 - 获取活动详情
 - 活动报名/取消报名
 - 查询当前用户报名状态
 
-建议接口：
+接口项：
 - `GET /activities`
 - `GET /activities/:activityId`
 - `POST /activities/:activityId/signup`
@@ -137,12 +137,12 @@
 
 ## 8. 订单与支付
 
-核心目标：
+接口范围：
 - 创建订单
 - 拉起支付
 - 查询支付结果
 
-建议接口：
+接口项：
 - `POST /orders`
 - `GET /orders/:orderId`
 - `POST /orders/:orderId/pay`
@@ -155,12 +155,12 @@
 
 ## 9. 会员体系
 
-核心目标：
+接口范围：
 - 获取会员信息
 - 获取套餐列表
 - 购买/续费会员
 
-建议接口：
+接口项：
 - `GET /memberships/current`
 - `GET /memberships/plans`
 - `POST /memberships/orders`
@@ -172,7 +172,7 @@
 
 ## 10. 后台管理系统未来会依赖的接口域
 
-后续后台大概率还需要：
+后续后台接口域包括：
 - 学员管理接口
 - 教师管理接口
 - 课程管理接口
@@ -182,9 +182,9 @@
 - 订单管理接口
 - 会员管理接口
 
-## 当前接口优先级建议
+## 当前接口优先级
 
-如果按真实项目的 MVP 推进，建议优先做：
+如果按真实项目的 MVP 推进，接口顺序如下：
 
 1. `auth`
 2. `students/profile`
@@ -201,6 +201,6 @@
 
 这份接口清单是“项目需求层接口”，不是最终接口协议。
 
-后续如果开始真正开发后端，建议下一步再补两份文档：
+后续如果开始真正开发后端，可继续补充两份文档：
 - 数据实体设计
 - API 字段级契约说明

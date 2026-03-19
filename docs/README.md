@@ -2,7 +2,7 @@
 
 这里是 KotobaLink 当前项目文档的统一入口。
 
-如果已经安装并启动 VitePress，推荐直接在 web 页面中查看，阅读体验更好：
+如果已经安装并启动 VitePress，可通过本地文档站查看：
 
 ```bash
 pnpm docs:dev
@@ -12,7 +12,7 @@ pnpm docs:dev
 
 - https://wkyoku1996.github.io/KotobaLink/
 
-推荐阅读顺序：
+文档顺序：
 1. [项目概览](./project-overview.md)
 2. [页面清单](./page-inventory.md)
 3. [数据架构](./data-architecture.md)

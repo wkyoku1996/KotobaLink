@@ -10,7 +10,7 @@
 
 ### `GET /students/profile`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -29,7 +29,7 @@
 
 ### `GET /courses/catalog`
 
-建议返回：
+示例返回：
 
 ```json
 [
@@ -54,7 +54,7 @@
 
 ### `GET /students/courses`
 
-建议返回：
+示例返回：
 
 ```json
 [
@@ -80,7 +80,7 @@
 
 ### `GET /schedule/week`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -108,7 +108,7 @@
 
 ### `GET /courses/:courseId/lessons/:lessonId`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -136,7 +136,7 @@
 
 ### `GET /courses/:courseId/assessments/:assessmentId`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -147,7 +147,7 @@
   "date": "2026-03-20",
   "score": "A-",
   "summary": "语法掌握较稳定，听力仍需加强",
-  "feedback": "建议加强口语与听力组合训练",
+    "feedback": "加强口语与听力组合训练",
   "courseName": "N4 语法强化班",
   "className": "周三晚间班",
   "teacher": "中村老师"
@@ -158,7 +158,7 @@
 
 ### `GET /notifications`
 
-建议返回：
+示例返回：
 
 ```json
 [
@@ -169,7 +169,7 @@
     "category": "task",
     "time": "2026-03-17 09:20",
     "sender": "学习系统",
-    "summary": "建议提前复习本周会话表达和听频练习。",
+    "summary": "提前复习本周会话表达和听频练习。",
     "tags": ["任务", "考试"],
     "important": true,
     "read": false
@@ -181,7 +181,7 @@
 
 ### `GET /activities/:activityId`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -200,7 +200,7 @@
 
 ### `POST /orders`
 
-建议请求：
+示例请求：
 
 ```json
 {
@@ -209,7 +209,7 @@
 }
 ```
 
-建议响应：
+示例响应：
 
 ```json
 {
@@ -227,7 +227,7 @@
 
 ### `GET /memberships/current`
 
-建议返回：
+示例返回：
 
 ```json
 {
@@ -246,7 +246,7 @@
 
 ## 十一、字段契约原则
 
-后续正式定义接口时，建议统一遵守：
+后续正式定义接口时，可统一遵守以下规则：
 
 1. 列表与详情字段尽量共享核心字段名
 2. 时间字段统一使用明确格式
@@ -254,9 +254,9 @@
 4. 同一业务对象不要在不同接口里随意换字段名
 5. 前后端共享字段名优先复用 `packages/types`
 
-## 十二、下一步建议
+## 十二、补充项
 
-这份文档之后，下一步最合理的是继续补：
+在这份文档基础上，可继续补充：
 
 1. 错误码规范
 2. 登录与权限设计

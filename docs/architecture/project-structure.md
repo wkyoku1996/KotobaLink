@@ -14,7 +14,7 @@
 - 足够灵活，支持分阶段迁移
 - 足够清晰，支持多人协作且不继续制造耦合
 
-## 推荐的顶层结构
+## 目标顶层结构
 
 ```text
 root/
@@ -58,7 +58,7 @@ root/
 - 微信开发者工具应打开 `KotobaLink`
 - `project.config.json` 已配置 `miniprogramRoot: "apps/miniapp/"`
 
-推荐内部结构：
+目标内部结构：
 
 ```text
 apps/miniapp/
@@ -76,7 +76,7 @@ apps/miniapp/
 - 面向用户的 Web 前台
 - 课程、课表、消息、会员等消费者侧流程
 
-推荐内部结构：
+目标内部结构：
 
 ```text
 apps/web/
@@ -95,7 +95,7 @@ apps/web/
 - 管理后台
 - 面向运营和管理的课程、订单、学员、教师、活动、消息等模块
 
-推荐内部结构：
+目标内部结构：
 
 ```text
 apps/admin/
@@ -115,7 +115,7 @@ apps/admin/
 - REST / RPC API
 - 认证授权、领域服务、持久化、任务与外部集成
 
-推荐内部结构：
+目标内部结构：
 
 ```text
 apps/backend/
@@ -174,7 +174,7 @@ apps/backend/
 
 注意：
 - 不要强行把小程序 UI 放进这个包
-- 小程序通常更适合共享设计令牌和交互规范，而不是直接共享实现组件
+- 小程序更常见的共享内容是设计令牌和交互规范，而不是直接共享实现组件
 
 #### `packages/config`
 
@@ -252,7 +252,7 @@ apps/backend/
 
 用于过渡期临时存放遗留内容。
 
-只有在迁移过程中确实需要时才建议使用。它的作用是避免在结构调整时直接打断当前工作。
+仅在迁移过程中确实需要时使用。它的作用是避免在结构调整时直接打断当前工作。
 
 ## 结构设计原则
 
@@ -268,7 +268,7 @@ apps/backend/
 
 ### 2. 共享层与后端按业务域组织
 
-这个项目的核心业务域大概率包括：
+这个项目的核心业务域包括：
 - user
 - course
 - lesson
@@ -278,14 +278,14 @@ apps/backend/
 - activity
 - order
 
-这些域应该在后端模块、共享类型、接口命名和后台模块中保持一致。
+这些域在后端模块、共享类型、接口命名和后台模块中保持一致。
 
 ### 3. 平台代码和领域代码要分开
 
 例如：
 - `wx.navigateTo` 属于小程序代码
 - HTTP controller 属于后端
-- 如果多个端都需要课程状态映射逻辑，它就应该放进共享包
+- 如果多个端都需要课程状态映射逻辑，这部分逻辑进入共享包
 
 这层分离，决定了后面新增客户端时结构还能不能继续适应。
 
@@ -293,31 +293,31 @@ apps/backend/
 
 目前第一轮物理迁移已经完成，也就是把小程序放入了 `apps/miniapp`。
 
-推荐迁移顺序：
+迁移顺序：
 1. 先冻结顶层目标结构
 2. 引入 `apps/`、`packages/`、`docs/`
 3. 把共享类型和纯工具从旧 `utils/` 中提出来
 4. 把小程序正式迁移到 `apps/miniapp`
 5. 后续的 web、admin、backend 直接在同一套共享层上启动
 
-## 当前仓库的即时建议
+## 当前仓库约束
 
 小程序已经迁移完成。
 
-当前建议：
+当前约束：
 1. 保持 `KotobaLink/project.config.json` 稳定
 2. 继续把可复用逻辑抽到 `packages/`
 3. 后续新增 web、admin、backend 时直接放到 `apps/*`
 4. 不要再在仓库根目录新增小程序业务代码
 
-## 推荐优先建设的共享包
+## 优先建设的共享包
 
-建议优先补强：
+优先范围：
 - `packages/types`：course、lesson、assessment、message、membership、activity、order
 - `packages/shared`：日期工具、格式化工具、状态枚举、映射函数
 - `packages/api-client`：web、admin、miniapp 共用的接口调用层
 
-## 建议的治理规则
+## 治理规则
 
 为了让结构长期保持适配性：
 - 新的跨应用业务逻辑不要直接写进 `apps/*`
@@ -326,17 +326,17 @@ apps/backend/
 - Admin / Web 应复用领域模型，不要各自再定义一套 ad hoc 类型
 - 小程序专属 UI 逻辑必须留在 `apps/miniapp`
 
-## 不应该放在根目录的内容
+## 不放在根目录的内容
 
 不要把新的业务代码直接放进仓库根目录。
 
-根目录应该只保留：
+根目录保留：
 - workspace 配置
 - 仓库级文档
 - 全局脚本
 - 顶层治理文件
 
-其他业务内容都应该放进 `apps/`、`packages/`、`docs/`、`infra/`、`scripts/` 或 `tests/`。
+其他业务内容放入 `apps/`、`packages/`、`docs/`、`infra/`、`scripts/` 或 `tests/`。
 
 ## 当前兼容性说明
 
@@ -348,4 +348,4 @@ apps/backend/
 - `utils/`
 - `templates/`
 
-在共享逻辑继续抽到 `packages/` 之前，这些路径应该保持稳定。
+在共享逻辑继续抽到 `packages/` 之前，这些路径保持稳定。
