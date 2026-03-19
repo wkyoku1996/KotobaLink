@@ -15,11 +15,11 @@ Sample response:
 ```json
 {
   "id": "student_001",
-  "name": "张三",
+  "name": "Hana Sato",
   "avatar": "https://...",
   "level": "N4",
-  "currentCourse": "N4 语法强化班",
-  "className": "周三晚间班",
+  "currentCourse": "N4 Grammar Intensive",
+  "className": "Wednesday Evening Class",
   "membershipStatus": "active",
   "membershipExpireAt": "2026-06-30"
 }
@@ -35,17 +35,17 @@ Sample response:
 [
   {
     "id": 101,
-    "name": "N4 语法强化班",
-    "type": "长期课程",
+    "name": "N4 Grammar Intensive",
+    "type": "long-term course",
     "duration": "8 周",
     "price": "JPY 32000",
-    "benefit": "含作业点评与阶段测评",
-    "summary": "面向 N4 阶段语法巩固与运用",
-    "teacher": "中村老师",
-    "classType": "小班课",
-    "classSchedule": "每周三 19:30",
-    "classroom": "线上教室 A",
-    "status": "可报名"
+    "benefit": "includes homework feedback and stage assessments",
+    "summary": "focused on strengthening and applying N4 grammar",
+    "teacher": "Ms. Nakamura",
+    "classType": "small-group class",
+    "classSchedule": "Every Wednesday 19:30",
+    "classroom": "Online Classroom A",
+    "status": "open for enrollment"
   }
 ]
 ```
@@ -61,17 +61,17 @@ Sample response:
   {
     "id": 101,
     "courseId": 101,
-    "courseName": "N4 语法强化班",
-    "className": "周三晚间班",
-    "teacher": "中村老师",
-    "classroom": "线上教室 A",
-    "serviceStatus": "已开通",
+    "courseName": "N4 Grammar Intensive",
+    "className": "Wednesday Evening Class",
+    "teacher": "Ms. Nakamura",
+    "classroom": "Online Classroom A",
+    "serviceStatus": "active",
     "lessonProgress": {
       "completed": 4,
       "total": 12,
       "pendingMakeups": 1
     },
-    "classInfo": "每周三 19:30 上课"
+    "classInfo": "Class meets every Wednesday at 19:30"
   }
 ]
 ```

@@ -6,7 +6,7 @@
 
 ここでは最終 OpenAPI ではなく、前後端の初期契約を扱います。
 
-## 1. 学員プロフィール
+## 1. 受講生プロフィール
 
 ### `GET /students/profile`
 
@@ -15,11 +15,11 @@
 ```json
 {
   "id": "student_001",
-  "name": "张三",
+  "name": "佐藤花子",
   "avatar": "https://...",
   "level": "N4",
-  "currentCourse": "N4 语法强化班",
-  "className": "周三晚间班",
+  "currentCourse": "N4 文法強化コース",
+  "className": "水曜夜クラス",
   "membershipStatus": "active",
   "membershipExpireAt": "2026-06-30"
 }
@@ -35,17 +35,17 @@
 [
   {
     "id": 101,
-    "name": "N4 语法强化班",
-    "type": "长期课程",
+    "name": "N4 文法強化コース",
+    "type": "継続コース",
     "duration": "8 周",
     "price": "JPY 32000",
-    "benefit": "含作业点评与阶段测评",
-    "summary": "面向 N4 阶段语法巩固与运用",
-    "teacher": "中村老师",
-    "classType": "小班课",
-    "classSchedule": "每周三 19:30",
-    "classroom": "线上教室 A",
-    "status": "可报名"
+    "benefit": "宿題フィードバックと段階評価を含む",
+    "summary": "N4 段階の文法定着と運用を対象とする",
+    "teacher": "中村先生",
+    "classType": "少人数クラス",
+    "classSchedule": "毎週水曜 19:30",
+    "classroom": "オンライン教室 A",
+    "status": "申込可能"
   }
 ]
 ```
@@ -61,17 +61,17 @@
   {
     "id": 101,
     "courseId": 101,
-    "courseName": "N4 语法强化班",
-    "className": "周三晚间班",
-    "teacher": "中村老师",
-    "classroom": "线上教室 A",
-    "serviceStatus": "已开通",
+    "courseName": "N4 文法強化コース",
+    "className": "水曜夜クラス",
+    "teacher": "中村先生",
+    "classroom": "オンライン教室 A",
+    "serviceStatus": "提供中",
     "lessonProgress": {
       "completed": 4,
       "total": 12,
       "pendingMakeups": 1
     },
-    "classInfo": "每周三 19:30 上课"
+    "classInfo": "毎週水曜 19:30 開講"
   }
 ]
 ```
