@@ -1,21 +1,18 @@
 # マイページ マイルストーン
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-PROFILE-007` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| データ源 | `growth.milestones` |
 
 ## 責務
+成長里程碑の時系列一覧を表示します。
 
-成长里程碑セクションとして、時系列で達成イベントを並べて表示します。各項目はタイトル、日付、説明で構成されます。
+## backend データ要求
+主な backend エンティティ: `StudentMilestone`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| タイトル | `item.title` | `string` |
-| 日付 | `item.date` | `string` |
-| 説明 | `item.desc` | `string` |
+| マイルストーン取得 | `GET` | `/api/v1/students/{studentId}/milestones` |

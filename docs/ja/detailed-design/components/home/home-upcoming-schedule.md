@@ -49,7 +49,7 @@
 | 空状態 | 空タイトル | 固定文言 | `string` | `近期暂无课程` | 空状態通知 | 表示固定 |
 | 空状態 | 空説明 | 固定文言 | `string` | `可以进入完整课表查看所有课程安排。` | 補足説明 | 表示固定 |
 
-## 入力パラメータ表
+## frontend 入力パラメータ表
 
 | キー | 型 | 必須 | 供給元 | 加工 | 用途 |
 | --- | --- | --- | --- | --- | --- |
@@ -57,24 +57,70 @@
 | `upcomingSchedule.dateLabel` | `string` | はい | `buildUpcomingSchedule()` | なし | セクション副題 |
 | `upcomingSchedule.courses` | `Array` | はい | `buildUpcomingSchedule()` | `startTime` 昇順 | 一覧表示 |
 
-## 操作項目表
+## frontend 操作項目表
 
 | 操作対象 | 表示 | 発火条件 | 無効条件 | イベント | 処理 | 遷移先 |
 | --- | --- | --- | --- | --- | --- | --- |
 | CTA ボタン | `查看课表` | 常時 | なし | `goSchedule` | `wx.navigateTo(...)` | `/pages/learning/schedule/index` |
 
-## 出力イベント表
+## frontend 出力イベント表
 
 | イベント | 発火元 | 更新状態 | 影響先 |
 | --- | --- | --- | --- |
 | `goSchedule` | CTA ボタン | なし | 课表頁遷移 |
 
-## 状態連動表
+## frontend 状態連動表
 
 | 関連 state | 利用箇所 | 影響 |
 | --- | --- | --- |
 | `activitySignedUp` | 間接 | schedule に活动項目が追加された場合、最近课程結果が変化 |
 | `purchasedCourseIds` | 間接 | 将来 purchase 後课程が schedule に入る場合、結果が変化 |
+
+## backend データ要求
+
+このコンポーネントは demo では `demo.schedule` から近期课程を抽出していますが、正式版ではホーム表示専用に「次回授業要約」を返す API か、当日 / 週間スケジュール API のいずれかが必要です。
+
+backend 側で必要になる主なエンティティ:
+
+- `Student`
+- `Enrollment`
+- `ScheduleSession`
+- `Teacher`
+- `Classroom` または `DeliveryChannel`
+
+このコンポーネントは以下の情報を一画面で必要とします。
+
+- 学員本人の今後予定
+- 開始 / 終了時刻
+- コース名
+- クラス名
+- 担当講師
+- セッション状態
+
+## 想定 API 一覧
+
+| 用途 | Method | Path | 主な request |
+| --- | --- | --- | --- |
+| ホーム用次回授業要約 | `GET` | `/api/v1/students/{studentId}/home/upcoming-session` | `studentId` |
+| スケジュール日次取得 | `GET` | `/api/v1/students/{studentId}/schedule/day` | `studentId`, `date` |
+| スケジュール週次取得 | `GET` | `/api/v1/students/{studentId}/schedule/week` | `studentId`, `weekStart` |
+
+## API フィールド対応表
+
+| 画面フィールド | 想定 response フィールド | 補足 |
+| --- | --- | --- |
+| `upcomingSchedule.dateLabel` | `session.displayDateLabel` | backend 生成でも frontend 生成でも可 |
+| `item.startTime` | `session.startTime` | 表示用時刻 |
+| `item.endTime` | `session.endTime` | 表示用時刻 |
+| `item.title` | `session.title` | セッション名 |
+| `item.courseName` | `session.course.name` | コース名 |
+| `item.className` | `session.class.name` | クラス名 |
+| `item.teacher` | `session.teacher.displayName` | 担当講師名 |
+| `item.status` | `session.statusLabel` | 開催状態 |
+
+## 書込 / 更新 API
+
+このコンポーネント自身は読取専用であり、直接の書込 API は持ちません。`查看课表` はスケジュールページへの遷移のみを担当します。
 
 ## データ流入元 / 流出先
 
@@ -103,9 +149,8 @@
 | 今日の课程がない | 未来课程の最初の 1 件を表示 |
 | 未来课程もない | `dateLabel = 暂无课程安排`、一覧 0 件 |
 
-## 実 API 化時の置換
+## 実装メモまたは移行メモ
 
-- `GET /schedule/week`
-- `GET /schedule/day`
-
-首页表示用の最近课程抽出ロジックは、実 API 化後も frontend selector として維持可能です。
+- demo では `buildUpcomingSchedule()` が selector として動作
+- 正式版では backend で「次回授業要約」を返すか、frontend selector を維持するかを決める
+- ホーム初期表示速度を優先するなら専用要約 API の方が構成しやすい

@@ -1,21 +1,18 @@
 # Lesson 重点文法
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-LESSON-005` |
 | 実装元 | `pages/learning/lesson-detail/index.wxml` |
-| データ源 | `lesson.grammar` |
 
 ## 責務
+Lesson に含まれる重点语法を一覧表示します。
 
-Lesson に含まれる重点语法条目を一覧表示します。文法参照用の静的表示であり、入力や押下イベントはありません。
+## backend データ要求
+主な backend エンティティ: `LessonGrammarPoint`
 
-このセクションは授業内容の確認を目的とし、文法項目単位の展開、回答入力、チェック状態保持は行いません。
-
-## 表示フィールド表
-
-| 表示名 | キー | 型 | 用途 |
-| --- | --- | --- | --- |
-| 文法項目 | `item` | `string` | 重点文法表示 |
+## 想定 API 一覧
+| 用途 | Method | Path |
+| --- | --- | --- |
+| Lesson 文法取得 | `GET` | `/api/v1/students/{studentId}/lessons/{lessonId}/grammar` |

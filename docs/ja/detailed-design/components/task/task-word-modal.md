@@ -1,35 +1,58 @@
-# 任务 词汇弹层
+# タスク 単語詳細モーダル
 
 ## 基本情報
+
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-TASK-004` |
+| コンポーネント ID | `CMP-TASK-004` |
 | 実装元 | `pages/tab/task/index.wxml` / `index.js` |
-| 控件类型 | 弹层控件 |
+| 関連イベント | `openWordCard` / `closeWordCard` / `markWordLearned` |
+| 関連 state | `activeWord` / `showWordModal` / `learnedVocabIds` |
+
+## 責務
+
+このコンポーネントは、選択した単語の読み、意味、例句を詳細表示し、学習済み記録を書き込むモーダルです。単なる表示ではなく、語彙学習進度更新の UI 起点です。
 
 ## 表示フィールド表
-| 表示名 | キー | 型 | 例 |
-| --- | --- | --- | --- |
-| 标签 | 固定文言 | `string` | `今日词汇卡片` |
-| 単語 | `activeWord.word` | `string` | `駅` |
-| 読み | `activeWord.reading` | `string` | `えき` |
-| 意味 | `activeWord.meaning` | `string` | `车站` |
-| 例句 | `activeWord.example` | `string` | `駅で友だちと...` |
 
-## 入力パラメータ表
-| キー | 型 | 必須 | 供給元 |
-| --- | --- | --- | --- |
-| `activeWord` | `object|null` | はい | `openWordCard()` |
-| `showWordModal` | `boolean` | はい | ローカル state |
+| 表示名 | キー | 型 |
+| --- | --- | --- |
+| 単語 | `activeWord.word` | `string` |
+| 読み | `activeWord.reading` | `string` |
+| 意味 | `activeWord.meaning` | `string` |
+| 例句 | `activeWord.example` | `string` |
 
-## 操作項目表
-| 操作対象 | 表示 | イベント | 処理 |
-| --- | --- | --- | --- |
-| 遮罩 | 外层区域 | `closeWordCard` | 弹层关闭 |
-| 主按钮 | `标记为已学习` / `我已学完，关闭卡片` | `markWordLearned` | `learnedVocabIds` 更新 |
-| 次按钮 | `稍后再看` | `closeWordCard` | 弹层关闭 |
+## frontend 操作項目表
 
-## 状態連動表
-| 関連 state | 影響 |
+| 操作対象 | イベント | 処理 |
+| --- | --- | --- |
+| マスク領域 | `closeWordCard` | モーダル閉鎖 |
+| 主按钮 | `markWordLearned` | `learnedVocabIds` 更新 |
+| 次按钮 | `closeWordCard` | モーダル閉鎖 |
+
+## backend データ要求
+
+主な backend エンティティ:
+- `DailyTaskVocabulary`
+- `VocabularyProgress`
+
+## 想定 API 一覧
+
+| 用途 | Method | Path |
+| --- | --- | --- |
+| 単語学習状態更新 | `POST` | `/api/v1/students/{studentId}/daily-task-vocab/{vocabId}/learned` |
+
+## API フィールド対応表
+
+| 画面フィールド | 想定 response フィールド |
 | --- | --- |
-| `learnedVocabIds` | 学習済み更新後、一覧と打卡状态に連動 |
+| `activeWord.word` | `vocab.word` |
+| `activeWord.reading` | `vocab.reading` |
+| `activeWord.meaning` | `vocab.meaning` |
+| `activeWord.example` | `vocab.exampleSentence` |
+
+## 書込 / 更新 API
+
+| 操作 | Method | Path | body |
+| --- | --- | --- | --- |
+| 学習済み記録 | `POST` | `/api/v1/students/{studentId}/daily-task-vocab/{vocabId}/learned` | なし |

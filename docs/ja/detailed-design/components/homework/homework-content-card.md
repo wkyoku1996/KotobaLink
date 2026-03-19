@@ -1,21 +1,18 @@
 # 宿題 内容カード
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-HOMEWORK-001` |
 | 実装元 | `pages/learning/homework/index.wxml` |
-| 直接依存 service | `getDemoData()` |
 
 ## 責務
+当日宿題のコース名と課題一覧を表示します。提出前に対象課題を確認するための表示領域です。
 
-当日宿題のコース名と課題一覧を表示します。宿題提出前に「何を提出するか」を確認するための内容表示エリアです。
+## backend データ要求
+主な backend エンティティ: `HomeworkAssignment`, `HomeworkTask`, `Enrollment`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| コース名 | `demo.homework.courseName` | `string` |
-| 課題タイトル | `item.title` | `string` |
-| 課題説明 | `item.desc` | `string` |
+| 宿題詳細取得 | `GET` | `/api/v1/students/{studentId}/homework/current` |

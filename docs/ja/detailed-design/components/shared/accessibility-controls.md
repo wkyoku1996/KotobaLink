@@ -4,60 +4,26 @@
 
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-SHARED-003` |
-| 控件名 | Accessibility Controls |
-| 種別 | 共有操作控件 |
-| 実装元 | `templates/accessibility.wxml` |
-| 挙動供給 | `behaviors/with-accessibility.js` |
+| コンポーネント ID | `CMP-SHARED-003` |
+| 種別 | 共有操作コンポーネント |
+| 実装元 | `templates/accessibility.wxml` / `store/accessibility-store.js` |
 
 ## 責務
 
-この控件は全ページ共通のアクセシビリティ操作を提供します。
+このコンポーネントは、フォント倍率や表示補助レベルなどの miniapp 内表示支援設定を切り替える共通操作です。業務データではなく表示設定を管理します。
 
-責務:
-- 文字・表示サイズ縮小
-- 文字・表示サイズ拡大
-- demo リセット
+## backend データ要求
 
-## ボタン一覧
+現行 demo では local store で完結しています。正式版で端末間同期が必要な場合のみ、ユーザー表示設定保存 API を追加対象とします。
 
-| 表示 | イベント | 条件 | 更新先 |
-| --- | --- | --- | --- |
-| `↻` | `resetDemo` | `showReset === true` の時だけ表示 | `kotobalink-demo-state` |
-| `A-` | `decreaseAccessibility` | `accessibility.canDecrease === true` | `kotobalink-accessibility-level` |
-| `A+` | `increaseAccessibility` | `accessibility.canIncrease === true` | `kotobalink-accessibility-level` |
+## 想定 API 一覧
 
-## 入力データ
+| 用途 | Method | Path |
+| --- | --- | --- |
+| 表示設定取得 | `GET` | `/api/v1/students/{studentId}/preferences/accessibility` |
+| 表示設定更新 | `PUT` | `/api/v1/students/{studentId}/preferences/accessibility` |
 
-| キー | 型 | 必須 | 供給元 | 用途 |
-| --- | --- | --- | --- | --- |
-| `accessibility.level` | `number` | はい | `getAccessibilitySettings()` | レベル切替 |
-| `accessibility.canDecrease` | `boolean` | はい | `getAccessibilitySettings()` | `A-` の活性制御 |
-| `accessibility.canIncrease` | `boolean` | はい | `getAccessibilitySettings()` | `A+` の活性制御 |
-| `showReset` | `boolean` | いいえ | 各ページの template data | `↻` 表示制御 |
+## 実装メモまたは移行メモ
 
-## 状態連動
-
-### 表示倍率連動
-
-1. `A-` / `A+` を押す
-2. `shiftLevel(delta)` 実行
-3. `kotobalink-accessibility-level` 更新
-4. `refreshAccessibility()` 実行
-5. `accessibility.pageScaleStyle` 更新
-6. ページ全体の表示倍率とフォントサイズが変わる
-
-### demo リセット連動
-
-1. `↻` を押す
-2. 各ページ実装の `resetDemo()` 実行
-3. `resetDemoState()` 実行
-4. `kotobalink-demo-state` が初期値に戻る
-5. ページ `refresh()` 実行
-
-## 依存ファイル
-
-- `templates/accessibility.wxml`
-- `behaviors/with-accessibility.js`
-- `store/accessibility-store.js`
-- 各ページの `resetDemo()` 実装
+- 端末ローカル優先なら backend 不要
+- アカウント跨ぎ同期が必要な場合のみ API 化する

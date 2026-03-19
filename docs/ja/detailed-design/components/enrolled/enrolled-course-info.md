@@ -1,26 +1,18 @@
 # 受講中コース コース基本情報
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-ENROLLED-002` |
 | 実装元 | `pages/account/profile-course-detail/index.wxml` |
-| データ源 | `detail.courseInfo` |
 
 ## 責務
+受講中コースの基本属性を表示します。
 
-受講中コースに紐づく基本属性をラベルと値で表示します。表示専用セクションであり、行押下や編集は持ちません。
+## backend データ要求
+主な backend エンティティ: `Enrollment`, `Course`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 | 用途 |
-| --- | --- | --- | --- |
-| 項目ラベル | `item.label` | `string` | 行識別 |
-| 項目値 | `item.value` | `string` | コース属性表示 |
-
-## 例外条件表
-
-| 条件 | 現在挙動 |
-| --- | --- |
-| 配列空 | 見出しのみ表示 |
+## 想定 API 一覧
+| 用途 | Method | Path |
+| --- | --- | --- |
+| 受講中コース詳細取得 | `GET` | `/api/v1/students/{studentId}/enrollments/{enrollmentId}` |

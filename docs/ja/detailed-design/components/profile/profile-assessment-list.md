@@ -1,24 +1,18 @@
 # マイページ 評価一覧
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-PROFILE-006` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| データ源 | `growth.assessments` |
 
 ## 責務
+关键测评与评分の一覧表示を担当します。
 
-关键测评与评分セクションとして、評価タイトル、得点、日付、種別、担当講師、概要を一覧表示します。現時点では詳細ページへの遷移はありません。
+## backend データ要求
+主な backend エンティティ: `AssessmentResult`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| タイトル | `item.title` | `string` |
-| 得点 | `item.score` | `string` |
-| 日付 | `item.date` | `string` |
-| 種別 | `item.type` | `string` |
-| 講師 | `item.teacher` | `string` |
-| 概要 | `item.summary` | `string` |
+| 評価履歴取得 | `GET` | `/api/v1/students/{studentId}/assessments` |

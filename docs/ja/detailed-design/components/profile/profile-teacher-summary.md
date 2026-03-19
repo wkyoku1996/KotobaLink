@@ -1,21 +1,18 @@
 # マイページ 講師サマリー
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-PROFILE-008` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| データ源 | `growth.teacherSnapshot` |
 
 ## 責務
+教師からの総評、強み、次段階重点を文章で表示します。
 
-教师成长总结セクションとして、总体评价、当前优势、下一阶段重点の 3 項目を表示します。成長状況を文章で要約する静的表示領域です。
+## backend データ要求
+主な backend エンティティ: `TeacherComment`, `StudentGrowthReview`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| 总体评价 | `growth.teacherSnapshot.overall` | `string` |
-| 当前优势 | `growth.teacherSnapshot.strengths` | `string` |
-| 下一阶段重点 | `growth.teacherSnapshot.nextFocus` | `string` |
+| 教師サマリー取得 | `GET` | `/api/v1/students/{studentId}/teacher-summary` |

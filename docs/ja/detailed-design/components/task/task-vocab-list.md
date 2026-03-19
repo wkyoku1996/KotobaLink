@@ -1,31 +1,27 @@
-# 任务 词汇列表
+# タスク 単語一覧
 
 ## 基本情報
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-TASK-002` |
+| コンポーネント ID | `CMP-TASK-002` |
 | 実装元 | `pages/tab/task/index.wxml` / `index.js` |
-| 直接依存 service | `getDemoData()` |
+| 関連イベント | `openWordCard` |
 
-## 表示フィールド表
-| 表示名 | キー | 型 | 例 | 用途 |
-| --- | --- | --- | --- | --- |
-| 词汇 | `item.word` | `string` | `駅` | 語彙表示 |
-| 读音 | `item.reading` | `string` | `えき` | 読み表示 |
-| 释义 | `item.meaning` | `string` | `车站` | 意味表示 |
-| 已学习标签 | `item.learned` | `boolean` | `true` | 学習済み表示 |
+## 責務
+当日タスク対象の語彙カード一覧を表示し、単語詳細モーダルの起点を提供します。
 
-## 入力パラメータ表
-| キー | 型 | 必須 | 供給元 |
-| --- | --- | --- | --- |
-| `demo.dailyTask.vocab` | `Array` | はい | `getDemoData()` |
+## backend データ要求
+主な backend エンティティ: `DailyTaskVocabulary`, `VocabularyProgress`
 
-## 操作項目表
-| 操作対象 | 表示 | イベント | 処理 |
-| --- | --- | --- | --- |
-| 词汇卡片 | 单词 + 释义 | `openWordCard` | `data-id` で activeWord 設定 |
+## 想定 API 一覧
+| 用途 | Method | Path |
+| --- | --- | --- |
+| 当日単語一覧取得 | `GET` | `/api/v1/students/{studentId}/daily-tasks/{taskId}/vocab` |
 
-## 状態連動表
-| 関連 state | 影響 |
+## API フィールド対応表
+| 画面フィールド | 想定 response フィールド |
 | --- | --- |
-| `learnedVocabIds` | `item.learned` と status-pill 表示に反映 |
+| `item.word` | `vocab.word` |
+| `item.reading` | `vocab.reading` |
+| `item.meaning` | `vocab.meaning` |
+| `item.learned` | `vocab.isLearned` |

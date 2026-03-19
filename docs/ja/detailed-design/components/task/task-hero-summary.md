@@ -1,20 +1,18 @@
 # タスク Hero Summary
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-TASK-001` |
 | 実装元 | `pages/tab/task/index.wxml` |
-| 直接依存 service | `getDemoData()` |
 
 ## 責務
+当日詞汇打卡ページのタイトルと導入説明を表示します。
 
-タスクページの冒頭で、今日の词汇打卡というページ目的と日次導入文を表示します。下部の単語一覧や打卡状態セクションの前提説明を担うヘッダーです。
+## backend データ要求
+主な backend エンティティ: `DailyTask`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| タイトル | 固定文言 | `string` |
-| 副題 | `demo.dailyTask.intro` | `string` |
+| 当日タスク要約取得 | `GET` | `/api/v1/students/{studentId}/daily-tasks/today` |

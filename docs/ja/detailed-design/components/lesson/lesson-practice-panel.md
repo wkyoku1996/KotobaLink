@@ -1,20 +1,20 @@
-# Lesson 课后练习
+# Lesson 演習パネル
 
+## 基本情報
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-LESSON-006` |
+| コンポーネント ID | `CMP-LESSON-006` |
 | 実装元 | `pages/learning/lesson-detail/index.wxml` / `index.js` |
+| 関連イベント | `selectOption` / `inputBlank` / `submitPractice` / `resetPractice` |
 
-| 表示名 | キー | 型 |
-| --- | --- | --- |
-| 练习标题 | `lesson.practice.quizTitle / examTitle` | `string` |
-| 题目 | `lesson.practice.questions[]` | `Array<object>` |
-| 答案状态 | `practiceAnswers` | `object` |
-| 结果 | `practiceResult` | `object|null` |
+## 責務
+課後练习表示、解答入力、結果算出、再作答を担当します。
 
-| 操作対象 | イベント | 処理 |
+## backend データ要求
+主な backend エンティティ: `LessonPractice`, `LessonPracticeSubmission`
+
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| 选项 | `selectOption` | 选择答案更新 |
-| 填空 | `inputBlank` | 文本更新 |
-| 提交按钮 | `submitPractice` | 正答数计算 |
-| 重置按钮 | `resetPractice` | 结果清空 |
+| 演習問題取得 | `GET` | `/api/v1/students/{studentId}/lessons/{lessonId}/practice` |
+| 演習回答提交 | `POST` | `/api/v1/students/{studentId}/lessons/{lessonId}/practice/submissions` |

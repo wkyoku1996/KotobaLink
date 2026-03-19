@@ -1,21 +1,18 @@
 # マイページ 学習アーカイブ
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-PROFILE-002` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| データ源 | `demo.learningArchive.summary` |
 
 ## 責務
+課時完了と宿題完了のサマリーを 2 枚カードで表示します。
 
-学習档案の要約として、课时完成情况と作业完成情况の 2 枚カードを表示します。プロフィールページ内の学習履歴サマリー領域です。
+## backend データ要求
+主な backend エンティティ: `LessonProgress`, `HomeworkSubmission`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| 课时完成情况 | `lessonCompleted` / `lessonTotal` | `number` |
-| 待补课 | `pendingMakeups` | `number` |
-| 作业完成情况 | `homeworkCompleted` / `homeworkTotal` | `number` |
+| 学習アーカイブ要約取得 | `GET` | `/api/v1/students/{studentId}/profile/archive-summary` |

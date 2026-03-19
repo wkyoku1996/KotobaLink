@@ -1,21 +1,18 @@
 # Lesson 基本情報
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-LESSON-002` |
 | 実装元 | `pages/learning/lesson-detail/index.wxml` |
-| データ源 | `lesson` |
 
 ## 責務
+授課老师、上课教室、课程状态を表示する基本情報セクションです。
 
-このコンポーネントは、対象 Lesson の授課老师、上课教室、课程状态を固定 3 行で表示します。Lesson 全体の環境情報を確認するための読み取り専用セクションです。
+## backend データ要求
+主な backend エンティティ: `Lesson`, `Teacher`, `Classroom`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 | 用途 |
-| --- | --- | --- | --- |
-| 授课老师 | `lesson.teacher` | `string` | 担当講師表示 |
-| 上课教室 | `lesson.classroom` | `string` | 実施場所表示 |
-| 课程状态 | `lesson.status` | `string` | 進行状態表示 |
+## 想定 API 一覧
+| 用途 | Method | Path |
+| --- | --- | --- |
+| Lesson 詳細取得 | `GET` | `/api/v1/students/{studentId}/lessons/{lessonId}` |

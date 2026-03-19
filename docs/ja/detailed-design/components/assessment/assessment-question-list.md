@@ -1,32 +1,20 @@
 # Assessment 設問一覧
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-ASSESS-003` |
 | 実装元 | `pages/learning/assessment-detail/index.wxml` / `index.js` |
 | 関連イベント | `selectOption` / `inputBlank` / `submitAssessment` / `resetAssessment` |
-| ページ state | `answers` / `result` |
 
 ## 責務
+演示题目表示、解答入力、結果算出、再作答をまとめて担当します。正式版では試験回答 API と連携する前提です。
 
-このコンポーネントは演示题目一覧、ユーザー解答入力、結果表示、再作答操作をまとめて扱います。選択式と穴埋め式の 2 種類に対応しています。
+## backend データ要求
+主な backend エンティティ: `AssessmentQuestion`, `AssessmentAnswerSheet`, `AssessmentSubmission`
 
-## 表示フィールド表
-
-| 表示名 | キー | 型 | 用途 |
-| --- | --- | --- | --- |
-| 問題文 | `question.prompt` | `string` | 設問表示 |
-| 選択肢 | `question.options` | `Array` | 選択式入力 |
-| プレースホルダ | `question.placeholder` | `string` | 穴埋め入力補助 |
-| 正答 | `question.correctAnswer` / `question.answer` | `string` | 結果表示後に表示 |
-
-## 操作項目表
-
-| 操作対象 | イベント | 処理 |
+## 想定 API 一覧
+| 用途 | Method | Path |
 | --- | --- | --- |
-| 選択肢 | `selectOption` | `answers[question.id]` を更新 |
-| 入力欄 | `inputBlank` | `answers[question.id]` を更新 |
-| 提出ボタン | `submitAssessment` | 正答数を算出し `result` を更新 |
-| 再作答ボタン | `resetAssessment` | `answers` / `result` を初期化 |
+| 設問一覧取得 | `GET` | `/api/v1/students/{studentId}/assessments/{assessmentId}/questions` |
+| 回答提交 | `POST` | `/api/v1/students/{studentId}/assessments/{assessmentId}/submissions` |

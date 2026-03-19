@@ -1,21 +1,18 @@
 # Lesson 重点単語
 
 ## 基本情報
-
 | 項目 | 内容 |
 | --- | --- |
 | コンポーネント ID | `CMP-LESSON-004` |
 | 実装元 | `pages/learning/lesson-detail/index.wxml` |
-| データ源 | `lesson.vocab` |
 
 ## 責務
+Lesson に含まれる重点词汇を一覧表示します。
 
-Lesson に含まれる重点词汇を一覧表示します。単語学習の参照用であり、タップして展開する挙動はありません。
+## backend データ要求
+主な backend エンティティ: `LessonVocabulary`
 
-このセクションはタスクページの単語カードとは異なり、学習済み管理や既読管理を持たない参照専用一覧です。
-
-## 表示フィールド表
-
-| 表示名 | キー | 型 | 用途 |
-| --- | --- | --- | --- |
-| 単語 | `item` | `string` | 重点語彙表示 |
+## 想定 API 一覧
+| 用途 | Method | Path |
+| --- | --- | --- |
+| Lesson 重点単語取得 | `GET` | `/api/v1/students/{studentId}/lessons/{lessonId}/vocab` |
