@@ -52,6 +52,7 @@ KotobaLink/
 
 建议从这里开始看项目说明：
 
+- [在线文档站](https://wkyoku1996.github.io/KotobaLink/)
 - [文档索引](./docs/README.md)
 - [项目概览](./docs/project-overview.md)
 - [页面清单](./docs/page-inventory.md)
@@ -67,7 +68,9 @@ KotobaLink/
 pnpm docs:dev
 ```
 
-如果仓库已开启 GitHub Pages，文档也可以通过在线站点查看。
+如果仓库已开启 GitHub Pages，文档也可以通过在线站点查看：
+
+- https://wkyoku1996.github.io/KotobaLink/
 
 ## 当前技术方向
 

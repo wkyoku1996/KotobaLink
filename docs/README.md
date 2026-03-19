@@ -8,7 +8,9 @@
 pnpm docs:dev
 ```
 
-如果仓库已经启用 GitHub Pages，也可以直接通过在线文档站查看。
+如果仓库已经启用 GitHub Pages，也可以直接通过在线文档站查看：
+
+- https://wkyoku1996.github.io/KotobaLink/
 
 推荐阅读顺序：
 1. [项目概览](./project-overview.md)
