@@ -1,8 +1,8 @@
-# Current Stable Baseline
+# 当前稳定基线
 
-## Repository Root
+## 仓库根目录
 
-The repository is now organized as a long-lived multi-app workspace:
+当前仓库已经整理成一个适合长期演进的多应用工作区：
 
 ```text
 KotobaLink/
@@ -21,38 +21,38 @@ KotobaLink/
   project.private.config.json
 ```
 
-## WeChat Mini Program Entry
+## 微信小程序入口
 
-- WeChat DevTools should open the `KotobaLink` directory.
-- The Mini Program root is configured through `project.config.json`.
-- `miniprogramRoot` points to `apps/miniapp/`.
+- 微信开发者工具应打开 `KotobaLink` 根目录
+- 小程序根目录通过 `project.config.json` 配置
+- `miniprogramRoot` 指向 `apps/miniapp/`
 
-## Miniapp Internal Boundaries
+## Miniapp 内部边界
 
-Inside `apps/miniapp/`, responsibilities are currently split as follows:
+当前 `apps/miniapp/` 内部职责划分如下：
 
-- `pages/`: Mini Program page entry files grouped by product domain
-- `services/`: Mini Program-facing data access and selector entrypoints
-- `store/`: Mini Program local state and persistence
-- `mock/`: demo data fixtures and demo-specific assembly logic
-- `config/`: demo constants and Mini Program-local configuration
-- `behaviors/`: reusable Mini Program behaviors
-- `templates/`: shared WXML template fragments
-- `utils/`: compatibility layer only
+- `pages/`：按业务域组织的小程序页面入口
+- `services/`：页面对外的数据访问与 selector 入口
+- `store/`：小程序本地状态与持久化
+- `mock/`：demo 假数据与 demo 组装逻辑
+- `config/`：demo 常量与小程序本地配置
+- `behaviors/`：可复用的小程序 behavior
+- `templates/`：共享的 WXML 模板片段
+- `utils/`：仅保留兼容层用途
 
-## Current Domain Page Groups
+## 当前页面业务分组
 
-- `pages/tab/`: main tab pages
-- `pages/learning/`: schedule, homework, lesson, assessment flows
-- `pages/catalog/`: catalog-side course detail
-- `pages/account/`: membership and enrolled course detail
-- `pages/engagement/`: activity flows
-- `pages/commerce/`: payment flows
-- `pages/legacy/`: unregistered historical template pages kept only for reference
+- `pages/tab/`：主导航页
+- `pages/learning/`：课表、作业、lesson、assessment 流程
+- `pages/catalog/`：课程详情与课程目录侧页面
+- `pages/account/`：会员与已报名课程详情
+- `pages/engagement/`：活动相关流程
+- `pages/commerce/`：支付相关流程
+- `pages/legacy/`：未注册的历史模板页，仅保留参考
 
-## Stable Shared Layer
+## 当前稳定共享层
 
-`packages/types` currently holds stable contract exports for:
+`packages/types` 当前已经承载稳定契约，覆盖：
 - user
 - course
 - lesson
@@ -62,26 +62,26 @@ Inside `apps/miniapp/`, responsibilities are currently split as follows:
 - order
 - common statuses
 
-`packages/shared` currently holds portable pure helpers for:
-- date key parsing and formatting
-- score normalization
-- schedule sorting and lesson date formatting
-- message sorting and filter counting
+`packages/shared` 当前已经承载可移植纯函数，覆盖：
+- 日期 key 解析与格式化
+- 分数转换
+- 课表排序与 lesson 日期格式化
+- 消息排序与筛选统计
 
-## What Is Intentionally Not Shared Yet
+## 当前刻意没有共享出去的内容
 
-The following remain inside `apps/miniapp` on purpose:
+下面这些目前仍然有意保留在 `apps/miniapp` 内：
 - `wx.getStorageSync` / `wx.setStorageSync`
-- page navigation
-- Mini Program view model assembly
-- accessibility behavior wiring
-- demo-specific page presentation logic
+- 页面跳转
+- 小程序页面 view model 组装
+- 无障碍行为绑定
+- 强 demo 语义的展示逻辑
 
-## Current Stability Goal
+## 当前稳定目标
 
-The repository is now in a good base state for:
-- continuing Mini Program demo development
-- starting project documentation work
-- adding future `web`, `admin`, and `backend` apps without changing the top-level structure again
+当前仓库已经进入一个适合继续推进的稳定阶段，可以支持：
+- 继续迭代小程序 demo
+- 开始完善项目说明文档
+- 后续新增 `web`、`admin`、`backend` 时不再改动顶层结构
 
-The next major phase should be documentation and product definition, not another structural migration.
+下一阶段重点应是文档、产品定义和真实业务设计，而不是继续做结构迁移。
