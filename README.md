@@ -67,6 +67,8 @@ KotobaLink/
 pnpm docs:dev
 ```
 
+如果仓库已开启 GitHub Pages，文档也可以通过在线站点查看。
+
 ## 当前技术方向
 
 - `apps/miniapp`：小程序专属代码

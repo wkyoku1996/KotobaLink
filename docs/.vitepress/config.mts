@@ -4,6 +4,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: 'KotobaLink 文档',
   description: 'KotobaLink 项目文档站',
+  base: '/KotobaLink/',
   srcDir: '.',
   cleanUrls: true,
   themeConfig: {
