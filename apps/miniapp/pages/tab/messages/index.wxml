@@ -1,0 +1,88 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card">
+        <view class="hero-title">消息提醒</view>
+        <view class="hero-subtitle">上课、每日任务、作业反馈和会员状态都通过统一消息入口承接。</view>
+        <view class="badge-row" wx:if="{{messageData}}">
+          <text class="badge">未读 {{messageData.unreadCount}}</text>
+          <text class="badge">重要 {{messageData.importantCount}}</text>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">消息分类</view>
+        <view class="message-filter-row" wx:if="{{messageData}}">
+          <view
+            class="message-filter-chip {{activeFilter === item.key ? 'is-active' : ''}}"
+            wx:for="{{messageData.filters}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="switchFilter"
+          >
+            {{item.label}} ({{item.count}})
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{messageData}}">
+        <view class="section-title">消息列表</view>
+        <view class="list" wx:if="{{visibleMessages.length}}">
+          <view
+            class="list-item message-item arrow {{!item.read ? 'is-unread' : ''}}"
+            wx:for="{{visibleMessages}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="openMessage"
+          >
+            <view class="message-topline">
+              <view class="message-meta-wrap">
+                <text class="message-type">{{item.type}}</text>
+                <text class="message-time">{{item.time}}</text>
+              </view>
+              <view class="message-state-wrap">
+                <text wx:if="{{item.important}}" class="status-pill message-important">重要</text>
+                <text class="message-read-state {{item.read ? 'is-read' : 'is-unread'}}">{{item.read ? '已读' : '未读'}}</text>
+              </view>
+            </view>
+            <view class="list-title">{{item.title}}</view>
+            <view class="list-meta">{{item.sender}}</view>
+            <view class="muted">{{item.summary}}</view>
+            <view class="message-tag-row">
+              <text class="message-tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+            </view>
+            <view class="message-open-hint">点击查看详情</view>
+          </view>
+        </view>
+        <view wx:else class="empty-tip">当前分类下暂无消息。</view>
+      </view>
+
+    </view>
+  </view>
+  <view wx:if="{{showMessageDetail}}" class="message-modal-mask" bindtap="closeMessageDetail">
+    <view wx:if="{{activeMessage}}" class="message-modal-card" catchtap="stopModal">
+      <view class="message-topline">
+        <view class="message-meta-wrap">
+          <text class="message-type">{{activeMessage.type}}</text>
+          <text class="message-time">{{activeMessage.time}}</text>
+        </view>
+        <view class="message-state-wrap">
+          <text wx:if="{{activeMessage.important}}" class="status-pill message-important">重要</text>
+          <text class="message-read-state is-read">已读</text>
+        </view>
+      </view>
+      <view class="message-detail-title">{{activeMessage.title}}</view>
+      <view class="list-meta">{{activeMessage.sender}}</view>
+      <view class="message-detail-body">{{activeMessage.summary}}</view>
+      <view class="message-tag-row">
+        <text class="message-tag" wx:for="{{activeMessage.tags}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="action-row">
+        <button class="btn" bindtap="closeMessageDetail">我知道了</button>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

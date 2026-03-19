@@ -1,0 +1,66 @@
+.action-row {
+  margin-top: 20rpx;
+}
+
+.vocab-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.vocab-card .status-pill {
+  margin-top: 16rpx;
+}
+
+.word-modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  background: rgba(29, 23, 18, 0.5);
+}
+
+.word-modal-card {
+  width: 100%;
+  background: #fffdf8;
+  border-radius: 32rpx;
+  padding: 36rpx 28rpx;
+  box-shadow: 0 20rpx 60rpx rgba(31, 22, 16, 0.18);
+}
+
+.word-modal-label {
+  font-size: 22rpx;
+  color: #857460;
+}
+
+.word-modal-word {
+  margin-top: 18rpx;
+  font-size: 54rpx;
+  font-weight: 700;
+  color: #1f6a62;
+}
+
+.word-modal-reading {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  color: #7a6b59;
+}
+
+.word-modal-meaning {
+  margin-top: 24rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #352c24;
+}
+
+.word-modal-example {
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border-radius: 20rpx;
+  background: #f6f1e8;
+  color: #625648;
+  font-size: 24rpx;
+  line-height: 1.7;
+}

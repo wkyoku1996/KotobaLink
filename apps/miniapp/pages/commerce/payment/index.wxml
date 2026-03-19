@@ -1,0 +1,42 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card">
+        <view class="hero-title">支付成功</view>
+        <view class="hero-subtitle">你已成功购买 {{demo.paymentOrder ? demo.paymentOrder.courseName : demo.student.course}}</view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">订单信息</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">已购课程</view>
+            <view class="list-meta">{{demo.paymentOrder ? demo.paymentOrder.courseName : demo.student.course}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">班级 / 服务形态</view>
+            <view class="list-meta">{{demo.paymentOrder ? demo.paymentOrder.className : demo.student.className}}</view>
+          </view>
+          <view class="list-item" wx:if="{{demo.paymentOrder}}">
+            <view class="list-title">支付金额</view>
+            <view class="list-meta">{{demo.paymentOrder.price}}</view>
+          </view>
+          <view class="list-item" wx:if="{{demo.paymentOrder}}">
+            <view class="list-title">课程权益</view>
+            <view class="list-meta">{{demo.paymentOrder.benefit}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">开通状态</view>
+            <view class="list-meta">{{demo.paymentOrder ? demo.paymentOrder.serviceStatus : '已开通'}}</view>
+          </view>
+        </view>
+        <view class="action-row">
+          <button class="btn" bindtap="goSchedule">查看我的课表</button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

@@ -1,0 +1,15 @@
+/* pages/tab/course/index.wxss */
+
+.empty-tip {
+  color: #999;
+  font-size: 28rpx;
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+/* 针对课程页的特定样式 */
+
+/* 页面底部内边距，如果 profile/index.wxss 中没有全局定义，则在此处保留 */
+.page-shell {
+  padding-bottom: 40rpx;
+}

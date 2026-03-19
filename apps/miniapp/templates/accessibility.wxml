@@ -1,0 +1,7 @@
+<template name="a11yControls">
+  <view class="accessibility-controls">
+    <button wx:if="{{showReset}}" class="a11y-icon-btn a11y-reset-btn" bindtap="resetDemo">↻</button>
+    <button class="a11y-icon-btn" bindtap="decreaseAccessibility" disabled="{{!accessibility.canDecrease}}">A-</button>
+    <button class="a11y-icon-btn" bindtap="increaseAccessibility" disabled="{{!accessibility.canIncrease}}">A+</button>
+  </view>
+</template>

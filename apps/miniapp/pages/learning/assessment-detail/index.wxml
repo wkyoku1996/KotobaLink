@@ -1,0 +1,82 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell" wx:if="{{assessment}}">
+      <view class="hero-card">
+        <view class="hero-title">{{assessment.title}}</view>
+        <view class="hero-subtitle">{{assessment.courseName}} · {{assessment.className}}</view>
+        <view class="badge-row">
+          <text class="badge">{{assessment.type}}</text>
+          <text class="badge">{{assessment.status}}</text>
+          <text class="badge">{{assessment.score}}</text>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">考试信息</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">考试时间</view>
+            <view class="list-meta">{{assessment.date}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">任课老师</view>
+            <view class="list-meta">{{assessment.teacher}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">考核说明</view>
+            <view class="muted">{{assessment.summary}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">演示题目</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{assessment.questions}}" wx:key="id" wx:for-item="question">
+            <view class="list-title">{{index + 1}}. {{question.prompt}}</view>
+
+            <view wx:if="{{question.type === 'choice'}}" class="practice-options">
+              <view
+                class="practice-option {{answers[question.id] === option ? 'is-active' : ''}}"
+                wx:for="{{question.options}}"
+                wx:key="*this"
+                wx:for-item="option"
+                data-question-id="{{question.id}}"
+                data-option="{{option}}"
+                bindtap="selectOption"
+              >
+                {{option}}
+              </view>
+            </view>
+
+            <view wx:if="{{question.type === 'blank'}}" class="practice-input-wrap">
+              <input
+                class="practice-input"
+                placeholder="{{question.placeholder}}"
+                value="{{answers[question.id] || ''}}"
+                data-question-id="{{question.id}}"
+                bindinput="inputBlank"
+              />
+            </view>
+
+            <view wx:if="{{result}}" class="muted">
+              正确答案：{{question.type === 'choice' ? question.correctAnswer : question.answer}}
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{result}}" class="notice">
+          本次演示结果：答对 {{result.correctCount}} / {{result.total}} 题
+        </view>
+
+        <view class="action-row">
+          <button class="btn" bindtap="submitAssessment">提交演示作答</button>
+          <button class="btn-ghost" bindtap="resetAssessment">重新作答</button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

@@ -1,0 +1,109 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell" wx:if="{{lesson}}">
+      <view class="hero-card">
+        <view class="hero-title">{{lesson.title}}</view>
+        <view class="hero-subtitle">{{lesson.courseName}} · {{lesson.className}}</view>
+        <view class="badge-row">
+          <text class="badge">{{lesson.date}} - {{lesson.endTime}}</text>
+          <text class="badge">{{lesson.status}}</text>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">课程基本信息</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">授课老师</view>
+            <view class="list-meta">{{lesson.teacher}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">上课教室</view>
+            <view class="list-meta">{{lesson.classroom}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">课程状态</view>
+            <view class="list-meta">{{lesson.status}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">课程大纲</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{lesson.outline}}" wx:key="*this">
+            <view class="list-meta">{{index + 1}}. {{item}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">重点词汇</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{lesson.vocab}}" wx:key="*this">
+            <view class="list-title">{{item}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">重点语法</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{lesson.grammar}}" wx:key="*this">
+            <view class="list-title">{{item}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{lesson.isEnrolledLesson && lesson.practice}}">
+        <view class="section-title">课后练习</view>
+        <view class="section-desc">{{lesson.practice.quizTitle}} · {{lesson.practice.examTitle}}</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{lesson.practice.questions}}" wx:key="id" wx:for-item="question">
+            <view class="list-title">{{index + 1}}. {{question.prompt}}</view>
+
+            <view wx:if="{{question.type === 'choice'}}" class="practice-options">
+              <view
+                class="practice-option {{practiceAnswers[question.id] === option ? 'is-active' : ''}}"
+                wx:for="{{question.options}}"
+                wx:key="*this"
+                wx:for-item="option"
+                data-question-id="{{question.id}}"
+                data-option="{{option}}"
+                bindtap="selectOption"
+              >
+                {{option}}
+              </view>
+            </view>
+
+            <view wx:if="{{question.type === 'blank'}}" class="practice-input-wrap">
+              <input
+                class="practice-input"
+                placeholder="{{question.placeholder}}"
+                value="{{practiceAnswers[question.id] || ''}}"
+                data-question-id="{{question.id}}"
+                bindinput="inputBlank"
+              />
+            </view>
+
+            <view wx:if="{{practiceResult}}" class="muted">
+              正确答案：{{question.type === 'choice' ? question.correctAnswer : question.answer}}
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{practiceResult}}" class="notice">
+          本次演示答题结果：答对 {{practiceResult.correctCount}} / {{practiceResult.total}} 题
+        </view>
+
+        <view class="action-row">
+          <button class="btn" bindtap="submitPractice">提交演示作答</button>
+          <button class="btn-ghost" bindtap="resetPractice">重新作答</button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

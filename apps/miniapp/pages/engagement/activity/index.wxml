@@ -1,0 +1,45 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card">
+        <view class="hero-title">{{demo.activity.title}}</view>
+        <view class="hero-subtitle">{{demo.activity.desc}}</view>
+        <view class="badge-row">
+          <text class="badge">{{demo.activity.status}}</text>
+          <text class="badge">{{demo.activity.fee}}</text>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">活动信息</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">类型</view>
+            <view class="list-meta">{{demo.activity.type}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">时间</view>
+            <view class="list-meta">{{demo.activity.time}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">地点</view>
+            <view class="list-meta">{{demo.activity.location}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">费用 / 状态</view>
+            <view class="list-meta">{{demo.activity.fee}} · {{demo.activity.status}}</view>
+          </view>
+        </view>
+        <view class="action-row">
+          <button class="btn" bindtap="toggleSignup">
+            {{demo.activity.status === '已报名' ? '取消报名' : '立即报名'}}
+          </button>
+          <button wx:if="{{demo.activity.status === '已报名'}}" class="btn-ghost" bindtap="goSchedule">查看课表</button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

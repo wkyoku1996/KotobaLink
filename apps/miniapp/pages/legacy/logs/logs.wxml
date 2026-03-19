@@ -1,0 +1,13 @@
+<!--logs.wxml-->
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <scroll-view class="scrollarea" scroll-y type="list">
+      <block wx:for="{{logs}}" wx:key="timeStamp" wx:for-item="log">
+        <view class="log-item">{{index + 1}}. {{log.date}}</view>
+      </block>
+    </scroll-view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

@@ -1,0 +1,64 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card">
+        <view class="hero-title">今日词汇打卡</view>
+        <view class="hero-subtitle">{{demo.dailyTask.intro}}</view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">今日 5 个词汇</view>
+        <view class="list">
+          <view class="list-item vocab-card" wx:for="{{demo.dailyTask.vocab}}" wx:key="id" data-id="{{item.id}}" bindtap="openWordCard">
+            <view class="list-title">{{item.word}}</view>
+            <view class="list-meta">{{item.reading}} · {{item.meaning}}</view>
+            <view class="muted">点击卡片查看释义和例句</view>
+            <text wx:if="{{item.learned}}" class="status-pill">已学习</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">打卡状态</view>
+        <view class="metric-grid">
+          <view class="metric-item">
+            <view class="metric-value">{{demo.dailyTask.learnedCount}}/{{demo.dailyTask.vocab.length}}</view>
+            <view class="metric-label">学习进度</view>
+          </view>
+          <view class="metric-item">
+            <view class="metric-value">{{demo.dailyTask.currentStreak}}</view>
+            <view class="metric-label">连续打卡</view>
+          </view>
+        </view>
+        <view wx:if="{{demo.state.dailyTaskCompleted}}" class="notice">
+          今日词汇已全部学习完成，系统已自动记录本次打卡。
+        </view>
+        <view class="action-row">
+          <button class="btn" bindtap="completeTask" disabled="{{demo.state.dailyTaskCompleted}}">
+            {{demo.dailyTask.buttonText}}
+          </button>
+          <button class="btn-ghost" bindtap="goHomework">查看作业</button>
+        </view>
+      </view>
+
+      <view wx:if="{{showWordModal}}" class="word-modal-mask" bindtap="closeWordCard">
+        <view class="word-modal-card" catchtap="stopModal">
+          <view class="word-modal-label">今日词汇卡片</view>
+          <view class="word-modal-word">{{activeWord.word}}</view>
+          <view class="word-modal-reading">{{activeWord.reading}}</view>
+          <view class="word-modal-meaning">{{activeWord.meaning}}</view>
+          <view class="word-modal-example">例句：{{activeWord.example}}</view>
+          <view class="action-row">
+            <button class="btn" bindtap="markWordLearned">
+              {{activeWord.learned ? '我已学完，关闭卡片' : '标记为已学习'}}
+            </button>
+            <button class="btn-ghost" bindtap="closeWordCard">稍后再看</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

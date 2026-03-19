@@ -1,0 +1,96 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card">
+        <view class="hero-title">你好，{{demo.student.name}}</view>
+        <view class="hero-subtitle">{{demo.student.course}}</view>
+        <view class="badge-row">
+          <text class="badge">课程服务中</text>
+          <text class="badge">会员权益中</text>
+          <text class="badge">{{demo.student.level}}</text>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">能力维度画像</view>
+        <view class="section-desc">根据课堂表现、作业和测评结果生成的当前能力概览。</view>
+        <view class="home-radar-card">
+          <view class="home-radar-legend">
+            <view class="legend-item"><text class="legend-dot current"></text><text>当前能力</text></view>
+            <view class="legend-item"><text class="legend-dot previous"></text><text>之前阶段</text></view>
+          </view>
+          <view class="home-radar-wrap">
+            <canvas id="homeSkillRadar" canvas-id="homeSkillRadar" class="home-radar-canvas" style="width: 520rpx; height: 520rpx;" width="420" height="420"></canvas>
+            <view class="home-radar-label top">{{growth.skillRadar[0].label}}</view>
+            <view class="home-radar-label right-top">{{growth.skillRadar[1].label}}</view>
+            <view class="home-radar-label right-bottom">{{growth.skillRadar[2].label}}</view>
+            <view class="home-radar-label left-bottom">{{growth.skillRadar[3].label}}</view>
+            <view class="home-radar-label left-top">{{growth.skillRadar[4].label}}</view>
+          </view>
+          <view class="home-skill-list">
+            <view class="home-skill-row" wx:for="{{growth.skillRadar}}" wx:key="label">
+              <view class="home-skill-meta">
+                <view class="home-skill-name">{{item.label}}</view>
+                <view class="home-skill-prev">之前 {{item.previousScore}}</view>
+              </view>
+              <view class="home-skill-side">
+                <view class="home-skill-score">{{item.scoreText}}</view>
+                <view class="home-skill-delta">{{item.deltaText}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{upcomingSchedule}}">
+        <view class="section-title">课程予定 · {{upcomingSchedule.dateLabel}}</view>
+        <view wx:if="{{upcomingSchedule.courses.length}}" class="today-schedule-list">
+          <view class="today-schedule-item" wx:for="{{upcomingSchedule.courses}}" wx:key="id">
+            <view class="today-schedule-time">
+              <view class="today-time-start">{{item.startTime}}</view>
+              <view class="today-time-line"></view>
+              <view class="today-time-end">{{item.endTime}}</view>
+            </view>
+            <view class="today-schedule-main">
+              <view class="list-title">{{item.title}}</view>
+              <view class="list-meta">{{item.courseName}} · {{item.className}}</view>
+              <view class="muted">授课老师：{{item.teacher}} · {{item.status}}</view>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="today-empty-card">
+          <view class="list-title">近期暂无课程</view>
+          <view class="muted">可以进入完整课表查看所有课程安排。</view>
+        </view>
+        <view class="action-row">
+          <button class="btn" bindtap="goSchedule">查看课表</button>
+        </view>
+      </view>
+
+      <view class="section-card activity-entry-card">
+        <view class="section-title">活动入口</view>
+        <view class="section-desc">{{demo.activity.title}} · {{demo.activity.time}} · {{demo.activity.status}}</view>
+        <view class="action-row">
+          <button class="btn-ghost" bindtap="goActivity">查看活动详情</button>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">今日任务</view>
+        <view class="section-desc">{{demo.dailyTask.intro}}</view>
+        <view class="badge-row">
+          <text class="status-pill">连续完成 {{demo.dailyTask.currentStreak}} 天</text>
+        </view>
+        <view wx:if="{{demo.state.dailyTaskCompleted}}" class="notice">
+          今日 5 个词汇已学习完成，已记为打卡成功，连续打卡 {{demo.dailyTask.currentStreak}} 天。
+        </view>
+        <view class="action-row">
+          <button class="btn" bindtap="goTask">开始今日词汇</button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility, showReset: true}}" />
+</view>

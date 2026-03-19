@@ -1,0 +1,149 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell">
+      <view class="hero-card profile-hero">
+        <view class="profile-hero-top">
+          <view>
+            <view class="hero-title">{{demo.student.name}}</view>
+            <view class="hero-subtitle">{{demo.student.course}}</view>
+          </view>
+          <button class="hero-membership-btn" bindtap="goMembership">会员中心</button>
+        </view>
+        <view class="badge-row">
+          <text class="badge">{{demo.student.className}}</text>
+          <text class="badge">{{demo.student.level}}</text>
+        </view>
+        <view class="profile-validity-card">
+          <view class="profile-validity-label">服务有效期</view>
+          <view class="profile-validity-value">{{demo.student.renewal}}</view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">学习档案</view>
+        <view class="archive-grid">
+          <view class="archive-card">
+            <view class="archive-value">{{demo.learningArchive.summary.lessonCompleted}} / {{demo.learningArchive.summary.lessonTotal}}</view>
+            <view class="archive-label">课时完成情况</view>
+            <view class="muted">待补课 {{demo.learningArchive.summary.pendingMakeups}} 节</view>
+          </view>
+          <view class="archive-card">
+            <view class="archive-value">{{demo.learningArchive.summary.homeworkCompleted}} / {{demo.learningArchive.summary.homeworkTotal}}</view>
+            <view class="archive-label">作业完成情况</view>
+            <view class="muted">按课程查看评分、点评和错题</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">成长轨迹概要</view>
+        <view class="growth-summary-grid">
+          <view class="growth-summary-card" wx:for="{{growth.summaryCards}}" wx:key="label">
+            <view class="growth-summary-value">{{item.value}}</view>
+            <view class="growth-summary-label">{{item.label}}</view>
+            <view class="muted">{{item.desc}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">阶段成绩趋势</view>
+        <view class="section-desc">按课堂表现、作业质量和小测成绩看最近几个阶段的成长变化。</view>
+        <view class="trend-chart">
+          <view class="trend-group" wx:for="{{growth.scoreTrend}}" wx:key="label">
+            <view class="trend-bars">
+              <view class="trend-bar lesson" style="height: {{item.lessonHeight}};"></view>
+              <view class="trend-bar homework" style="height: {{item.homeworkHeight}};"></view>
+              <view class="trend-bar quiz" style="height: {{item.quizHeight}};"></view>
+            </view>
+            <view class="trend-label">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="trend-legend">
+          <view class="legend-item"><text class="legend-dot lesson"></text><text>课堂表现</text></view>
+          <view class="legend-item"><text class="legend-dot homework"></text><text>作业质量</text></view>
+          <view class="legend-item"><text class="legend-dot quiz"></text><text>习题/小测</text></view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">能力维度画像</view>
+        <view class="radar-card">
+          <view class="radar-legend">
+            <view class="legend-item"><text class="legend-dot current"></text><text>当前能力</text></view>
+            <view class="legend-item"><text class="legend-dot previous"></text><text>之前阶段</text></view>
+          </view>
+          <view class="radar-canvas-wrap">
+            <canvas id="skillRadar" canvas-id="skillRadar" class="radar-canvas" style="width: 520rpx; height: 520rpx;" width="420" height="420"></canvas>
+            <view class="radar-label top">{{growth.skillRadar[0].label}}</view>
+            <view class="radar-label right-top">{{growth.skillRadar[1].label}}</view>
+            <view class="radar-label right-bottom">{{growth.skillRadar[2].label}}</view>
+            <view class="radar-label left-bottom">{{growth.skillRadar[3].label}}</view>
+            <view class="radar-label left-top">{{growth.skillRadar[4].label}}</view>
+          </view>
+          <view class="skill-list">
+            <view class="skill-row" wx:for="{{growth.skillRadar}}" wx:key="label">
+              <view class="skill-head">
+                <text class="skill-label">{{item.label}}</text>
+                <text class="skill-score">{{item.scoreText}}</text>
+              </view>
+              <view class="skill-subline">
+                <text class="muted">之前 {{item.previousScore}}</text>
+                <text class="skill-delta">{{item.deltaText}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">关键测评与评分</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{growth.assessments}}" wx:key="id">
+            <view class="lesson-head">
+              <view class="list-title">{{item.title}}</view>
+              <text class="status-pill">{{item.score}}</text>
+            </view>
+            <view class="list-meta">{{item.date}} · {{item.type}} · {{item.teacher}}</view>
+            <view class="muted">{{item.summary}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">成长里程碑</view>
+        <view class="timeline-list">
+          <view class="timeline-item" wx:for="{{growth.milestones}}" wx:key="id">
+            <view class="timeline-dot"></view>
+            <view class="timeline-content">
+              <view class="list-title">{{item.title}}</view>
+              <view class="list-meta">{{item.date}}</view>
+              <view class="muted">{{item.desc}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{growth}}">
+        <view class="section-title">教师成长总结</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">总体评价</view>
+            <view class="muted">{{growth.teacherSnapshot.overall}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">当前优势</view>
+            <view class="muted">{{growth.teacherSnapshot.strengths}}</view>
+          </view>
+          <view class="list-item">
+            <view class="list-title">下一阶段重点</view>
+            <view class="muted">{{growth.teacherSnapshot.nextFocus}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

@@ -1,0 +1,85 @@
+<import src="../../../templates/accessibility.wxml" />
+
+<view class="accessibility-page level-{{accessibility.level}}">
+  <view class="accessible-stage" style="{{accessibility.pageScaleStyle}}">
+    <view class="page-shell" wx:if="{{detail}}">
+      <view class="hero-card">
+        <view class="hero-title">{{detail.title}}</view>
+        <view class="hero-subtitle">{{course.type}} · {{course.duration}} · {{course.status}}</view>
+      </view>
+
+      <view class="section-card" wx:if="{{detailMode === 'schedule' && lesson}}">
+        <view class="section-title">当前课次</view>
+        <view class="list">
+          <view class="list-item">
+            <view class="list-title">{{lesson.title}}</view>
+            <view class="list-meta">{{lesson.date}} - {{lesson.endTime}}</view>
+            <view class="muted">{{lesson.className}} · {{lesson.teacher}} · {{lesson.classroom}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">课程基本信息</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{detail.courseInfo}}" wx:key="label">
+            <view class="list-title">{{item.label}}</view>
+            <view class="list-meta">{{item.value}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">班级基本信息</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{detail.classInfo}}" wx:key="label">
+            <view class="list-title">{{item.label}}</view>
+            <view class="list-meta">{{item.value}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">教师基本信息</view>
+        <view class="list">
+          <view class="list-item" wx:for="{{detail.teacherInfo}}" wx:key="label">
+            <view class="list-title">{{item.label}}</view>
+            <view class="list-meta">{{item.value}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">Lesson 列表</view>
+        <view class="list" wx:if="{{detail.lessons.length}}">
+          <view class="list-item arrow" wx:for="{{detail.lessons}}" wx:key="id" data-lesson-id="{{item.id}}" bindtap="openLessonDetail">
+            <view class="list-title">{{item.title}}</view>
+            <view class="list-meta">{{item.date}} - {{item.endTime}}</view>
+            <view class="muted">{{item.classroom}} · {{item.teacher}} · {{item.status}}</view>
+            <view class="muted">{{item.summary}}</view>
+          </view>
+        </view>
+        <view wx:else class="empty-tip">当前课程暂无 lesson 安排。</view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-title">考核安排概览</view>
+        <view class="list" wx:if="{{detail.assessmentOverview.length}}">
+          <view class="list-item" wx:for="{{detail.assessmentOverview}}" wx:key="label">
+            <view class="list-title">{{item.label}}</view>
+            <view class="list-meta">{{item.value}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="action-row">
+          <button class="btn-secondary" bindtap="purchaseCourse" disabled="{{isPurchased}}">
+            {{isPurchased ? '已在我的课程中' : '立即购买'}}
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+  <template is="a11yControls" data="{{accessibility: accessibility}}" />
+</view>

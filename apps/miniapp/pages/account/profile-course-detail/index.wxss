@@ -1,0 +1,20 @@
+/* pages/profile-course-detail/index.wxss */
+/* 引入与 profile 页面一致的样式，保持风格统一 */
+@import "../../tab/profile/index.wxss";
+.page-shell {
+  padding-bottom: 40rpx;
+}
+
+.lesson-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.empty-tip {
+  margin-top: 18rpx;
+  color: #999;
+  font-size: 28rpx;
+  text-align: center;
+}

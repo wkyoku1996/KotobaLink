@@ -1,0 +1,10 @@
+.action-row {
+  margin-top: 20rpx;
+}
+
+.empty-tip {
+  margin-top: 18rpx;
+  color: #999;
+  font-size: 28rpx;
+  text-align: center;
+}

@@ -1,0 +1,141 @@
+.action-row {
+  margin-top: 20rpx;
+}
+
+.message-filter-row {
+  margin-top: 18rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.message-filter-chip {
+  padding: 12rpx 18rpx;
+  border-radius: 999rpx;
+  background: #f7f1e7;
+  border: 1rpx solid rgba(108, 87, 63, 0.12);
+  font-size: 22rpx;
+  color: #6e6458;
+}
+
+.message-filter-chip.is-active {
+  background: #1f6a62;
+  color: #fff;
+  border-color: #1f6a62;
+}
+
+.message-item.is-unread {
+  border-color: rgba(31, 106, 98, 0.28);
+  box-shadow: inset 6rpx 0 0 #1f6a62;
+}
+
+.message-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.message-meta-wrap,
+.message-state-wrap,
+.message-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.message-type,
+.message-time,
+.message-read-state,
+.message-tag {
+  font-size: 22rpx;
+}
+
+.message-type {
+  color: #1f6a62;
+  font-weight: 700;
+}
+
+.message-time {
+  color: #8a7f73;
+}
+
+.message-read-state {
+  color: #8a7f73;
+}
+
+.message-read-state.is-unread {
+  color: #ce7a2a;
+  font-weight: 700;
+}
+
+.message-read-state.is-read {
+  color: #7d7469;
+}
+
+.message-important {
+  background: #fde6cf;
+  color: #bf6b1f;
+}
+
+.message-tag-row {
+  margin-top: 14rpx;
+}
+
+.message-open-hint {
+  margin-top: 18rpx;
+  font-size: 22rpx;
+  color: #8a7f73;
+}
+
+.message-tag {
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  background: #f7f1e7;
+  color: #7a6c5c;
+}
+
+.message-modal-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 28rpx;
+  background: rgba(24, 21, 18, 0.42);
+}
+
+.message-modal-card {
+  width: 100%;
+  max-width: 680rpx;
+  padding: 32rpx 28rpx;
+  border-radius: 28rpx;
+  background: #fffdf8;
+  box-shadow: 0 20rpx 60rpx rgba(39, 28, 18, 0.18);
+}
+
+.message-detail-title {
+  margin-top: 18rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #2c241d;
+  line-height: 1.5;
+}
+
+.message-detail-body {
+  margin-top: 18rpx;
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: #5f554a;
+}
+
+.empty-tip {
+  margin-top: 18rpx;
+  color: #999;
+  font-size: 28rpx;
+  text-align: center;
+}

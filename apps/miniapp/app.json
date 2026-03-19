@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/tab/home/index",
+    "pages/tab/course/index",
+    "pages/tab/task/index",
+    "pages/tab/messages/index",
+    "pages/tab/profile/index",
+    "pages/commerce/payment/index",
+    "pages/learning/schedule/index",
+    "pages/learning/homework/index",
+    "pages/engagement/activity/index",
+    "pages/catalog/course-detail/index",
+    "pages/learning/lesson-detail/index",
+    "pages/learning/assessment-detail/index",
+    "pages/account/membership/index",
+    "pages/account/profile-course-detail/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "KotobaLink",
+    "navigationBarBackgroundColor": "#f6f3ea",
+    "backgroundColor": "#f6f3ea"
+  },
+  "tabBar": {
+    "color": "#7d7469",
+    "selectedColor": "#1f6a62",
+    "backgroundColor": "#fffdf8",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/tab/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/tab/course/index",
+        "text": "课程"
+      },
+      {
+        "pagePath": "pages/tab/task/index",
+        "text": "任务"
+      },
+      {
+        "pagePath": "pages/tab/messages/index",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/tab/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
