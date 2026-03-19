@@ -1,117 +1,33 @@
 # 機能クローズドループ
 
-## 文書目的
+## 文書範囲
 
-この文書は、現在の demo で比較的まとまったクローズドループを形成している機能と、そのページ間の接続を整理するものです。
+本書は、現在の demo に存在する主要なクロスページループを一覧化するための索引です。
 
-## 1. コース購入ループ
+個別ボタン、フィールド、イベント、状態書き戻し位置は本書では重複記載せず、詳細設計文書を参照します。
 
-流れ:
+## 現在のクローズドループ一覧
 
-1. ユーザーが `コース` ページに入る
-2. 購入可能コースを見る
-3. コース詳細へ進む
-4. 購入を実行する
-5. ローカル購入状態を書き込む
-6. 支払い結果ページへ遷移する
-7. コースページへ戻ると受講中コースへ移動する
+| ループ名 | 起点ページ | 終点ページ | 関係状態 | 関係ページ |
+| --- | --- | --- | --- | --- |
+| コース購入 | `pages/tab/course/index` | `pages/commerce/payment/index` | `purchasedCourseIds`、`lastPurchasedCourseId` | `pages/catalog/course-detail/index` |
+| イベント申込 | `pages/tab/home/index` / `pages/learning/schedule/index` | `pages/engagement/activity/index` | `activitySignedUp` | `pages/learning/schedule/index`、`pages/tab/messages/index` |
+| 毎日タスク | `pages/tab/task/index` | `pages/tab/task/index` | `learnedVocabIds`、`dailyTaskCompleted` | なし |
+| 宿題提出 | `pages/tab/task/index` / `pages/learning/schedule/index` | `pages/learning/homework/index` | `homeworkSubmitted` | `pages/tab/profile/index` |
+| メッセージ既読 | `pages/tab/messages/index` | `pages/tab/messages/index` | `readNotificationIds` | なし |
+| スケジュールから Lesson 詳細 | `pages/learning/schedule/index` | `pages/learning/lesson-detail/index` | 専用書き戻し状態なし | なし |
+| マイページから会員プラン | `pages/tab/profile/index` | `pages/account/membership/index` | 専用書き戻し状態なし | なし |
 
-関係ページ:
-- `pages/tab/course/index`
-- `pages/catalog/course-detail/index`
-- `pages/commerce/payment/index`
+## 利用順序
 
-関係状態:
-- `purchased`
-- `purchasedCourseIds`
-- `lastPurchasedCourseId`
+1. 本書でループに関係するページと状態フィールドを確認する
+2. [ページ一覧](./page-inventory.md) でページパスを確認する
+3. 詳細設計のページ文書でコンポーネント構成を確認する
+4. 個別コンポーネント文書で操作、イベント、状態書き戻し位置を確認する
 
-## 2. イベント申込ループ
+## 関連文書
 
-流れ:
-
-1. ユーザーがホームまたは時間割からイベントページへ進む
-2. 申込を押す
-3. 申込状態を書き込む
-4. イベント通知文面が変わる
-5. 時間割にイベント予定が追加される
-6. 再度押すと申込を取り消せる
-
-関係ページ:
-- `pages/engagement/activity/index`
-- `pages/learning/schedule/index`
-- `pages/tab/home/index`
-
-関係状態:
-- `activitySignedUp`
-
-## 3. 毎日タスクループ
-
-流れ:
-
-1. ユーザーがタスクページに入る
-2. 単語カードを開く
-3. 単語学習済みを記録する
-4. 単語完了後にチェックインする
-5. 画面の連続記録と完了状態が更新される
-
-関係状態:
-- `learnedVocabIds`
-- `dailyTaskCompleted`
-
-## 4. 宿題提出ループ
-
-流れ:
-
-1. ユーザーがタスクまたは時間割から宿題ページへ進む
-2. 宿題提出を押す
-3. 提出状態を書き込む
-4. 関連画面で状態が変わる
-
-関係ページ:
-- `pages/tab/task/index`
-- `pages/learning/homework/index`
-- `pages/tab/profile/index`
-
-関係状態:
-- `homeworkSubmitted`
-
-## 5. メッセージ既読ループ
-
-流れ:
-
-1. ユーザーがメッセージセンターに入る
-2. 分類を選ぶ
-3. メッセージを開く
-4. 既読状態を書き込む
-5. 詳細を表示する
-6. 未読数と一覧状態を更新する
-
-関係状態:
-- `readNotificationIds`
-
-## 6. 時間割から学習内容へのループ
-
-流れ:
-
-1. ユーザーが時間割ページに入る
-2. コース項目を押す
-3. lesson 詳細へ進む
-4. 学習内容、単語、文法を確認する
-5. 申込済みコースでは練習内容も表示する
-
-関係ページ:
-- `pages/learning/schedule/index`
-- `pages/learning/lesson-detail/index`
-
-## 7. マイページから成長表示へのループ
-
-流れ:
-
-1. ユーザーがマイページに入る
-2. 学習記録、トレンド、レーダー、教師サマリーを確認する
-3. 会員センターへ進む
-
-関係ページ:
-- `pages/tab/profile/index`
-- `pages/account/membership/index`
+- [現在の Demo 機能](./demo-features.md)
+- [データ構成](./data-architecture.md)
+- [Demo から正式版への移行](./project-transition-plan.md)
+- `docs/ja/detailed-design/`

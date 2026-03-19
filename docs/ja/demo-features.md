@@ -1,108 +1,42 @@
 # 現在の Demo 機能
 
-## 文書目的
+## 文書範囲
 
-この文書は、現在のミニアプリ demo で実装済みの機能と、その到達範囲を整理するためのものです。
+本書は、現在の demo がカバーしている機能モジュール一覧のみを記載します。
 
-ここでは「現在実装済みで表示と操作ができる範囲」を対象とします。
+モジュール内部のコンポーネント、フィールド、ボタン、状態連動、データ入出力は本書では重複記載せず、詳細設計文書を参照します。
 
 ## 現在の機能モジュール
 
-### 1. ホーム概要
+| モジュール | 対応ページ | 現在の範囲 |
+| --- | --- | --- |
+| ホーム概要 | `pages/tab/home/index` | 受講生情報、コース要約、成長グラフ、クイック導線 |
+| コース | `pages/tab/course/index`、`pages/catalog/course-detail/index`、`pages/account/profile-course-detail/index` | コース一覧、コース詳細、受講中コース詳細 |
+| スケジュール | `pages/learning/schedule/index` | 週間予定、授業予定、イベント予定 |
+| タスクと宿題 | `pages/tab/task/index`、`pages/learning/homework/index` | 単語学習、チェックイン、宿題提出 |
+| メッセージ | `pages/tab/messages/index` | 分類フィルタ、詳細閲覧、既読状態 |
+| マイページ | `pages/tab/profile/index`、`pages/account/membership/index` | 学習記録、成長表示、会員入口 |
+| イベント | `pages/engagement/activity/index` | イベント詳細、申込状態 |
+| 決済完了 | `pages/commerce/payment/index` | 直近注文結果、後続導線 |
+| Lesson / Assessment 詳細 | `pages/learning/lesson-detail/index`、`pages/learning/assessment-detail/index` | 教材内容、設問内容、資料表示 |
 
-現在実装済み:
-- 受講生基本情報表示
-- 現在のコースとレベル表示
-- 直近 lesson の要約表示
-- 成長レーダーチャート表示
-- 時間割、イベント、タスクへのクイック導線
-- demo 状態のリセット
+## 状態連動に使用している主なローカル状態
 
-モジュール説明:
-- demo の主入口
-- 学習状態、成長情報、主要導線を一括表示
+| 状態フィールド | 役割 |
+| --- | --- |
+| `purchasedCourseIds` | 購入済みコースの識別 |
+| `lastPurchasedCourseId` | 直近購入コースの識別 |
+| `homeworkSubmitted` | 宿題提出状態 |
+| `dailyTaskCompleted` | 毎日タスク完了状態 |
+| `learnedVocabIds` | 学習済み単語の識別 |
+| `readNotificationIds` | 既読メッセージの識別 |
+| `activitySignedUp` | イベント申込状態 |
 
-### 2. コースモジュール
+状態の保存先と読取経路は [データ構成](./data-architecture.md) を参照してください。
 
-現在実装済み:
-- 受講中コース一覧
-- 購入可能コース一覧
-- 申込済みコース詳細
-- 購入可能コース詳細
-- 購入後の状態切替
-- 支払い結果ページへの遷移
+## 関連文書
 
-モジュール説明:
-- コース閲覧、コース区分、購入導線、詳細確認を扱う
-
-### 3. 時間割モジュール
-
-現在実装済み:
-- 週表示の時間割
-- 当週のコース集計
-- 時間割項目から lesson 詳細へ遷移
-- イベント申込後の時間割反映
-
-### 4. タスクと宿題モジュール
-
-現在実装済み:
-- 毎日単語学習
-- 単語カードモーダル
-- 単語学習済みの記録
-- 単語完了後のチェックイン
-- 宿題ページへの遷移
-- 宿題提出状態の切替
-
-### 5. メッセージモジュール
-
-現在実装済み:
-- 分類別フィルタ
-- 未読 / 既読状態表示
-- メッセージ詳細表示
-- 開封時の既読反映
-- 未読数の更新
-
-### 6. マイページと成長モジュール
-
-現在実装済み:
-- 学習記録サマリー
-- 成長指標カード
-- 成績トレンドチャート
-- 能力レーダー
-- 教師サマリーとマイルストーン
-- 会員センターへの導線
-
-### 7. イベントモジュール
-
-現在実装済み:
-- イベント詳細表示
-- 申込 / キャンセル
-- 申込状態による通知文面の変化
-- 申込状態による時間割表示の変化
-
-### 8. 支払い結果モジュール
-
-現在実装済み:
-- 購入後の支払い結果表示
-- 直近購入コースの表示
-- 支払い完了後の時間割導線
-
-### 9. Lesson / Assessment 詳細
-
-現在実装済み:
-- lesson 詳細表示
-- 教材、単語、文法表示
-- 申込済みコースでの練習内容表示
-- assessment 詳細表示
-
-## Demo 状態で駆動している主要なローカル状態
-
-- `purchasedCourseIds`
-- `lastPurchasedCourseId`
-- `homeworkSubmitted`
-- `dailyTaskCompleted`
-- `learnedVocabIds`
-- `readNotificationIds`
-- `activitySignedUp`
-
-これらの状態はミニアプリ local storage に保存され、ページ間の連動に使用されます。
+- [ページ一覧](./page-inventory.md)
+- [機能クローズドループ](./feature-closed-loops.md)
+- [データ構成](./data-architecture.md)
+- `docs/ja/detailed-design/`

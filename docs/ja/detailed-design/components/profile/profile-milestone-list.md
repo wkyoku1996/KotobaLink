@@ -1,15 +1,21 @@
-# 我的 里程碑
+# マイページ マイルストーン
 
 ## 基本情報
+
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-PROFILE-007` |
+| コンポーネント ID | `CMP-PROFILE-007` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| 直接依存 service | `getProfileGrowthData()` |
+| データ源 | `growth.milestones` |
+
+## 責務
+
+成长里程碑セクションとして、時系列で達成イベントを並べて表示します。各項目はタイトル、日付、説明で構成されます。
 
 ## 表示フィールド表
-| 表示名 | キー | 型 | 例 |
-| --- | --- | --- | --- |
-| 标题 | `item.title` | `string` | `课堂互动稳定提升` |
-| 日期 | `item.date` | `string` | `2026-02-03` |
-| 描述 | `item.desc` | `string` | `课堂问答开始能连续回应...` |
+
+| 表示名 | キー | 型 |
+| --- | --- | --- |
+| タイトル | `item.title` | `string` |
+| 日付 | `item.date` | `string` |
+| 説明 | `item.desc` | `string` |

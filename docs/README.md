@@ -26,6 +26,11 @@ pnpm docs:dev
 11. [开发说明](./development-guide.md)
 12. [当前稳定基线](./architecture/current-stable-baseline.md)
 
+详细设计入口：
+- 日文详细设计首页：`docs/ja/detailed-design/`
+- 详细设计按“一个控件一份文档”维护
+- 页面总览文档不再重复记录控件级字段、事件和状态说明
+
 架构参考：
 - [当前稳定基线](./architecture/current-stable-baseline.md)
 - [Miniapp 边界](./architecture/miniapp-boundaries.md)

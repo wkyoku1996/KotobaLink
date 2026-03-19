@@ -1,173 +1,33 @@
 # 功能闭环路径
 
-## 文档目的
+## 文档范围
 
-这份文档说明当前 demo 中哪些功能已经形成了相对完整的闭环，以及闭环是如何在页面之间串起来的。
+本文档只保留当前 demo 的跨页面闭环索引，用于说明闭环起点、终点、关联状态和对应设计文档位置。
 
-## 1. 课程购买闭环
+页面内控件事件、按钮动作、字段来源与写回位置不在本文档重复展开，统一以详细设计文档为准。
 
-闭环路径：
+## 当前闭环索引
 
-1. 用户进入 `课程` 页
-2. 查看“可购买课程”
-3. 点击进入课程详情页
-4. 点击购买
-5. 写入本地购买状态
-6. 跳转到支付结果页
-7. 再次回到课程页后，课程进入“我的课程”
+| 闭环名称 | 起点页面 | 终点页面 | 关联状态 | 关联页面 |
+| --- | --- | --- | --- | --- |
+| 课程购买 | `pages/tab/course/index` | `pages/commerce/payment/index` | `purchasedCourseIds`、`lastPurchasedCourseId` | `pages/catalog/course-detail/index` |
+| 活动报名 | `pages/tab/home/index` / `pages/learning/schedule/index` | `pages/engagement/activity/index` | `activitySignedUp` | `pages/learning/schedule/index`、`pages/tab/messages/index` |
+| 每日任务 | `pages/tab/task/index` | `pages/tab/task/index` | `learnedVocabIds`、`dailyTaskCompleted` | 无 |
+| 作业提交 | `pages/tab/task/index` / `pages/learning/schedule/index` | `pages/learning/homework/index` | `homeworkSubmitted` | `pages/tab/profile/index` |
+| 消息阅读 | `pages/tab/messages/index` | `pages/tab/messages/index` | `readNotificationIds` | 无 |
+| 课表进入课程内容 | `pages/learning/schedule/index` | `pages/learning/lesson-detail/index` | 无独立写回状态 | 无 |
+| 个人中心进入会员页 | `pages/tab/profile/index` | `pages/account/membership/index` | 无独立写回状态 | 无 |
 
-涉及页面：
-- `pages/tab/course/index`
-- `pages/catalog/course-detail/index`
-- `pages/commerce/payment/index`
+## 阅读方式
 
-涉及状态：
-- `purchased`
-- `purchasedCourseIds`
-- `lastPurchasedCourseId`
+1. 在本文档确认闭环涉及的页面与状态字段
+2. 在 [页面清单](./page-inventory.md) 中确认页面路径
+3. 在详细设计页面文档中确认控件构成
+4. 在对应控件文档中查看具体按钮、字段、事件和状态写回位置
 
-当前闭环效果：
-- 课程购买后状态会变化
-- 支付页会展示最近一次购买课程
-- 课程列表会从“可购买”切换为“已开通”
+## 相关文档
 
-## 2. 活动报名闭环
-
-闭环路径：
-
-1. 用户从首页或课表进入活动页
-2. 点击报名
-3. 写入活动报名状态
-4. 活动消息文案变化
-5. 课表中新增活动安排
-6. 再次点击可取消报名
-
-涉及页面：
-- `pages/engagement/activity/index`
-- `pages/learning/schedule/index`
-- `pages/tab/home/index`
-
-涉及状态：
-- `activitySignedUp`
-
-当前闭环效果：
-- 报名状态会影响活动页按钮
-- 会影响消息内容
-- 会影响课表周视图是否展示活动
-
-## 3. 每日任务闭环
-
-闭环路径：
-
-1. 用户进入任务页
-2. 打开词汇卡片
-3. 标记词汇已学习
-4. 学完词汇后点击完成打卡
-5. 页面更新连续打卡与完成状态
-
-涉及页面：
-- `pages/tab/task/index`
-
-涉及状态：
-- `learnedVocabIds`
-- `dailyTaskCompleted`
-
-当前闭环效果：
-- 未完成词汇时不能打卡
-- 学完词汇后可以完成打卡
-- 打卡后页面按钮和状态会变化
-
-## 4. 作业提交闭环
-
-闭环路径：
-
-1. 用户从任务页或课表进入作业页
-2. 点击提交作业
-3. 写入提交状态
-4. 返回页面后作业状态变化
-
-涉及页面：
-- `pages/tab/task/index`
-- `pages/learning/homework/index`
-- `pages/tab/profile/index`
-
-涉及状态：
-- `homeworkSubmitted`
-
-当前闭环效果：
-- 作业按钮文本变化
-- 作业状态会在相关页面保持一致
-
-## 5. 消息阅读闭环
-
-闭环路径：
-
-1. 用户进入消息中心
-2. 选择分类筛选消息
-3. 点击某条消息
-4. 自动写入已读状态
-5. 弹出详情
-6. 未读数与列表状态同步更新
-
-涉及页面：
-- `pages/tab/messages/index`
-
-涉及状态：
-- `readNotificationIds`
-
-当前闭环效果：
-- 打开消息后会自动标记已读
-- 未读数量会更新
-- 再次进入页面仍保持已读
-
-## 6. 课表到课程内容闭环
-
-闭环路径：
-
-1. 用户进入课表页
-2. 点击某个课程项
-3. 进入 lesson 详情
-4. 查看课程内容、词汇、语法
-5. 如果是已报名课程，还可查看练习内容
-
-涉及页面：
-- `pages/learning/schedule/index`
-- `pages/learning/lesson-detail/index`
-
-当前闭环效果：
-- 课表项可直接进入内容详情
-- lesson 详情根据课程状态展示不同信息
-
-## 7. 个人中心到成长展示闭环
-
-闭环路径：
-
-1. 用户进入个人中心
-2. 查看档案摘要、趋势图、雷达图、教师总结
-3. 点击进入会员中心
-
-涉及页面：
-- `pages/tab/profile/index`
-- `pages/account/membership/index`
-
-当前闭环效果：
-- 个人中心已具备完整成长展示
-- 会员中心作为附加入口存在
-
-## 当前闭环的性质
-
-当前这些闭环主要属于：
-- 前端演示闭环
-- 本地状态闭环
-- 页面联动闭环
-
-它们的价值在于：
-- 可以说明产品流程
-- 可以用于设计和评审
-- 可以为后端接口设计提供依据
-
-但它们还不属于真实业务闭环，因为：
-- 没有真实登录体系
-- 没有真实课程服务数据
-- 没有真实支付和订单
-- 没有真实消息推送
+- [当前 Demo 功能说明](./demo-features.md)
+- [数据架构](./data-architecture.md)
+- [从 Demo 到正式项目](./project-transition-plan.md)
+- `docs/ja/detailed-design/`

@@ -1,58 +1,58 @@
 # 开发说明
 
+## 文档范围
+
+本文档只说明当前仓库的开发入口、目录规则和文档维护规则。
+
+功能细节、页面控件设计和状态联动不在本文档重复展开：
+
+- 项目结构：见架构文档
+- 数据分层：见 [数据架构](./data-architecture.md)
+- 控件与页面设计：见详细设计文档
+
 ## 当前开发入口
 
-如果当前要开发小程序：
+| 项目 | 位置 |
+| --- | --- |
+| 仓库根目录 | `KotobaLink/` |
+| 微信工程入口 | 仓库根目录 |
+| 小程序源码目录 | `apps/miniapp/` |
+| 小程序根配置 | `project.config.json` |
+| 文档站目录 | `docs/` |
 
-1. 在微信开发者工具中打开仓库根目录 `KotobaLink`
-2. 小程序源码通过 `project.config.json` 读取
-3. `miniprogramRoot` 指向 `apps/miniapp/`
+## 代码放置规则
 
-## 当前开发规则
+| 内容 | 目录 |
+| --- | --- |
+| 小程序页面 | `apps/miniapp/pages/` |
+| demo 假数据 | `apps/miniapp/mock/` |
+| 本地状态与持久化 | `apps/miniapp/store/` |
+| 页面对外取数逻辑 | `apps/miniapp/services/` |
+| 小程序配置 | `apps/miniapp/config/` |
+| 稳定数据契约 | `packages/types/` |
+| 可复用纯函数 | `packages/shared/` |
 
-### 新增小程序页面
+## 当前约束
 
-- 页面放到 `apps/miniapp/pages/` 对应业务目录下
-- 需要启用的页面注册到 `apps/miniapp/app.json`
-- 不要把新页面直接放到仓库根目录
-
-### 新增数据逻辑
-
-- demo 假数据放 `apps/miniapp/mock/`
-- storage 与本地状态放 `apps/miniapp/store/`
-- 页面对外取数逻辑放 `apps/miniapp/services/`
-- 小程序本地配置放 `apps/miniapp/config/`
-
-### 新增共享逻辑
-
-- 稳定数据契约放 `packages/types/`
-- 可复用纯函数放 `packages/shared/`
-- 任何依赖 `wx.*` 的逻辑都不要放进共享包
-
-### 应避免的做法
-
-- 不要再往 `apps/miniapp/utils/` 塞新业务逻辑
-- 不要让页面直接读取 `mock/`
-- 不要在 `apps/` 之外新增应用代码
-- 不要把 `pages/legacy/` 当成当前正式产品代码
-
-## 当前扩展顺序
-
-当前开发顺序如下：
-
-1. 继续在 `apps/miniapp` 中开发小程序功能
-2. 补齐产品与流程文档
-3. 在 `packages/types` 中沉淀后端与多端共用契约
-4. 在 `packages/shared` 中继续提取稳定纯函数
-5. 未来把 Web、后台、后端直接放到 `apps/` 下启动
+- 新页面注册到 `apps/miniapp/app.json`
+- 不在 `apps/` 之外新增应用代码
+- 不向 `apps/miniapp/utils/` 继续堆放业务逻辑
+- 页面不直接读取 `mock/`
+- 依赖 `wx.*` 的逻辑不进入共享包
+- `pages/legacy/` 不作为正式业务目录使用
 
 ## 文档维护规则
 
-如果产品范围有变化，至少更新：
-- `docs/project-overview.md`
-- `docs/page-inventory.md`
-- `docs/data-architecture.md`
+| 变更类型 | 需要同步的文档 |
+| --- | --- |
+| 页面范围变更 | `docs/page-inventory.md`、详细设计页面文档 |
+| 控件字段或交互变更 | 对应详细设计控件文档 |
+| 状态或数据来源变更 | `docs/data-architecture.md`、对应详细设计控件文档 |
+| 仓库结构变更 | `docs/architecture/current-stable-baseline.md`、`apps/miniapp/README.md` |
 
-如果仓库结构有变化，至少更新：
-- `docs/architecture/current-stable-baseline.md`
-- `apps/miniapp/README.md`
+## 相关文档
+
+- [页面清单](./page-inventory.md)
+- [数据架构](./data-architecture.md)
+- [当前稳定基线](./architecture/current-stable-baseline.md)
+- `docs/ja/detailed-design/`

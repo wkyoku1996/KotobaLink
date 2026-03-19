@@ -1,15 +1,21 @@
-# 我的 学习档案
+# マイページ 学習アーカイブ
 
 ## 基本情報
+
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-PROFILE-002` |
+| コンポーネント ID | `CMP-PROFILE-002` |
 | 実装元 | `pages/tab/profile/index.wxml` |
-| 直接依存 service | `getDemoData()` |
+| データ源 | `demo.learningArchive.summary` |
+
+## 責務
+
+学習档案の要約として、课时完成情况と作业完成情况の 2 枚カードを表示します。プロフィールページ内の学習履歴サマリー領域です。
 
 ## 表示フィールド表
-| 表示名 | キー | 型 | 例 |
-| --- | --- | --- | --- |
-| 课时完成 | `lessonCompleted / lessonTotal` | `string` | `18 / 34` |
-| 待补课 | `pendingMakeups` | `number` | `2` |
-| 作业完成 | `homeworkCompleted / homeworkTotal` | `string` | `19 / 22` |
+
+| 表示名 | キー | 型 |
+| --- | --- | --- |
+| 课时完成情况 | `lessonCompleted` / `lessonTotal` | `number` |
+| 待补课 | `pendingMakeups` | `number` |
+| 作业完成情况 | `homeworkCompleted` / `homeworkTotal` | `number` |

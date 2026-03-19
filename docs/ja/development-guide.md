@@ -1,30 +1,54 @@
 # 開発ガイド
 
+## 文書範囲
+
+本書は、現在のリポジトリにおける開発入口、ディレクトリ規則、文書更新規則のみを記載します。
+
+機能詳細、ページ設計、状態連動は本書では重複記載せず、構造文書と詳細設計文書を参照します。
+
 ## 現在の開発入口
 
-ミニアプリを開発する場合は以下の入口を使います。
+| 項目 | 位置 |
+| --- | --- |
+| リポジトリルート | `KotobaLink/` |
+| WeChat 工程入口 | リポジトリルート |
+| miniapp ソース | `apps/miniapp/` |
+| miniapp ルート設定 | `project.config.json` |
+| 文書サイト | `docs/` |
 
-1. WeChat DevTools で `KotobaLink` リポジトリルートを開く
-2. ミニアプリソースは `project.config.json` から読み込まれる
-3. `miniprogramRoot` は `apps/miniapp/` を指す
+## コード配置規則
 
-## 現在の開発ルール
+| 内容 | ディレクトリ |
+| --- | --- |
+| miniapp ページ | `apps/miniapp/pages/` |
+| demo 仮データ | `apps/miniapp/mock/` |
+| ローカル状態と永続化 | `apps/miniapp/store/` |
+| ページ向け取得ロジック | `apps/miniapp/services/` |
+| miniapp 設定 | `apps/miniapp/config/` |
+| 安定したデータ契約 | `packages/types/` |
+| 再利用可能な純関数 | `packages/shared/` |
 
-### ミニアプリページを追加する場合
+## 現在の制約
 
-- ページは `apps/miniapp/pages/` 配下の対応ドメインに配置する
-- 有効化するページは `apps/miniapp/app.json` に登録する
-- 新規ページをリポジトリルートに置かない
+- 新規ページは `apps/miniapp/app.json` に登録する
+- `apps/` の外にアプリケーションコードを追加しない
+- `apps/miniapp/utils/` に新規業務ロジックを追加しない
+- ページから `mock/` を直接参照しない
+- `wx.*` に依存する処理は共有パッケージへ移さない
+- `pages/legacy/` は正式業務ディレクトリとして扱わない
 
-### データロジックを追加する場合
+## 文書更新規則
 
-- demo 仮データは `apps/miniapp/mock/`
-- storage とローカル状態は `apps/miniapp/store/`
-- ページ向け取得ロジックは `apps/miniapp/services/`
-- ミニアプリ設定は `apps/miniapp/config/`
+| 変更内容 | 更新対象 |
+| --- | --- |
+| ページ範囲の変更 | `docs/ja/page-inventory.md`、詳細設計ページ文書 |
+| コンポーネントのフィールド・操作変更 | 対応する詳細設計コンポーネント文書 |
+| 状態やデータ源の変更 | `docs/ja/data-architecture.md`、対応する詳細設計コンポーネント文書 |
+| リポジトリ構造の変更 | `docs/ja/architecture/current-stable-baseline.md`、`apps/miniapp/README.md` |
 
-### 共有ロジックを追加する場合
+## 関連文書
 
-- 安定したデータ契約は `packages/types/`
-- 再利用可能な純関数は `packages/shared/`
-- `wx.*` に依存する処理は共有パッケージに置かない
+- [ページ一覧](./page-inventory.md)
+- [データ構成](./data-architecture.md)
+- [現在の安定基線](./architecture/current-stable-baseline.md)
+- `docs/ja/detailed-design/`

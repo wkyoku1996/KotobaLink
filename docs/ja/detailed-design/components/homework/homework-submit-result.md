@@ -1,18 +1,26 @@
-# 作业 提交结果区
+# 宿題 提出結果エリア
+
+## 基本情報
 
 | 項目 | 内容 |
 | --- | --- |
-| 控件 ID | `CMP-HOMEWORK-002` |
+| コンポーネント ID | `CMP-HOMEWORK-002` |
 | 実装元 | `pages/learning/homework/index.wxml` / `index.js` |
-| 直接依存 service | `setDemoState()` |
+| 関連イベント | `submitHomework` / `goProfile` |
+| 関連 state | `homeworkSubmitted` |
 
-| 表示名 | キー | 型 | 例 |
+## 責務
+
+このコンポーネントは、未提出時の提出ボタンと、提出後の完了メッセージおよび学習档案導線を切り替えて表示します。
+
+## 表示規則
+
+- `demo.homeworkSubmitted === false` の場合は `提交作业` ボタンを表示
+- `demo.homeworkSubmitted === true` の場合は完了メッセージと `查看学习档案` ボタンを表示
+
+## 操作項目表
+
+| 操作対象 | イベント | 処理 | 遷移先 |
 | --- | --- | --- | --- |
-| 提交状态 | `demo.homeworkSubmitted` | `boolean` | `false` |
-| 主按钮 | 固定文言 | `string` | `提交作业` |
-| 成功提示 | 固定文言 | `string` | `作业已提交！` |
-
-| 操作対象 | イベント | 処理 |
-| --- | --- | --- |
-| 提交按钮 | `submitHomework` | `homeworkSubmitted=true` |
-| 查看档案按钮 | `goProfile` | 我的頁へ切替 |
+| 提出按钮 | `submitHomework` | `homeworkSubmitted = true` に更新 | なし |
+| 档案按钮 | `goProfile` | Tab 切替 | `/pages/tab/profile/index` |

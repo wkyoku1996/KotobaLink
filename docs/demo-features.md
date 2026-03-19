@@ -1,143 +1,48 @@
 # 当前 Demo 功能说明
 
-## 文档目的
+## 文档范围
 
-这份文档用于说明当前小程序 demo 已经实现了哪些功能，以及这些功能目前处于什么完成度。
+本文档只保留当前 demo 已覆盖的功能模块清单，用于说明“当前有哪些功能范围”。
 
-这里关注的是“当前已经实现并可演示的范围”。
+模块内控件、字段、按钮、状态与数据链路不在本文档重复展开：
+
+- 页面与控件结构：见详细设计文档
+- 状态与数据分层：见 [数据架构](./data-architecture.md)
+- 后续真实化改造：见 [从 Demo 到正式项目](./project-transition-plan.md)
 
 ## 当前功能模块
 
-### 1. 首页总览
+| 模块 | 对应页面 | 当前范围 |
+| --- | --- | --- |
+| 首页总览 | `pages/tab/home/index` | 学员信息、课程摘要、成长图表、快捷入口 |
+| 课程 | `pages/tab/course/index`、`pages/catalog/course-detail/index`、`pages/account/profile-course-detail/index` | 课程列表、课程详情、已报名课程详情 |
+| 课表 | `pages/learning/schedule/index` | 周课表、课程安排、活动安排 |
+| 任务与作业 | `pages/tab/task/index`、`pages/learning/homework/index` | 词汇学习、打卡状态、作业提交 |
+| 消息 | `pages/tab/messages/index` | 分类筛选、消息阅读、已读状态 |
+| 个人中心 | `pages/tab/profile/index`、`pages/account/membership/index` | 学习档案、成长展示、会员入口 |
+| 活动 | `pages/engagement/activity/index` | 活动详情、报名状态、状态切换 |
+| 支付结果 | `pages/commerce/payment/index` | 最近订单结果、后续跳转 |
+| Lesson / Assessment 详情 | `pages/learning/lesson-detail/index`、`pages/learning/assessment-detail/index` | 课程内容、题目内容、资料展示 |
 
-当前已实现：
-- 学员基础信息展示
-- 当前课程与等级展示
-- 最近课程摘要展示
-- 成长雷达图展示
-- 快捷入口跳转到课表、活动、任务
-- 一键重置 demo 状态
+## 当前状态驱动项
 
-模块说明：
-- 作为 demo 主入口
-- 统一展示学习状态、成长信息与常用流转入口
+当前 demo 的页面联动主要依赖以下本地状态：
 
-### 2. 课程模块
+| 状态字段 | 作用 |
+| --- | --- |
+| `purchasedCourseIds` | 标记已购买课程 |
+| `lastPurchasedCourseId` | 标记最近一次购买课程 |
+| `homeworkSubmitted` | 标记作业是否已提交 |
+| `dailyTaskCompleted` | 标记每日任务是否完成 |
+| `learnedVocabIds` | 标记已学习词汇 |
+| `readNotificationIds` | 标记已读消息 |
+| `activitySignedUp` | 标记活动报名状态 |
 
-当前已实现：
-- 我的课程列表
-- 可购买课程列表
-- 已报名课程详情页
-- 可购买课程详情页
-- 课程购买后状态切换
-- 购买后进入支付结果页
+这些状态的读写规则与来源位置见 [数据架构](./data-architecture.md)。
 
-模块说明：
-- 演示课程浏览、课程区分、购买转化和课程详情查看
+## 相关文档
 
-### 3. 课表模块
-
-当前已实现：
-- 周视图课表
-- 当前周课程统计
-- 点击课表项进入 lesson 详情
-- 活动报名后活动进入课表
-
-模块说明：
-- 演示学员视角的每周安排与课程入口
-
-### 4. 任务与作业模块
-
-当前已实现：
-- 每日词汇学习
-- 词汇卡片弹层
-- 标记词汇已学习
-- 词汇学完后完成打卡
-- 进入作业页
-- 提交作业状态切换
-
-模块说明：
-- 演示日常学习任务和作业提交的基本闭环
-
-### 5. 消息模块
-
-当前已实现：
-- 消息分类筛选
-- 未读/已读状态展示
-- 点击消息查看详情
-- 点击后自动标记为已读
-- 未读数自动变化
-
-模块说明：
-- 演示消息中心的基本读消息流程
-
-### 6. 个人中心与成长模块
-
-当前已实现：
-- 学习档案摘要
-- 成长指标卡片
-- 成绩趋势图
-- 能力雷达图
-- 教师总结与成长里程碑
-- 进入会员中心
-
-模块说明：
-- 演示学习成果和用户成长的可视化展示
-
-### 7. 活动模块
-
-当前已实现：
-- 活动详情展示
-- 报名/取消报名
-- 报名状态影响消息提醒
-- 报名状态影响课表展示
-
-模块说明：
-- 演示活动报名和活动状态联动
-
-### 8. 支付结果模块
-
-当前已实现：
-- 购买后的支付结果展示
-- 支付结果页展示最近一次购买课程信息
-- 支付完成后可进入课表
-
-模块说明：
-- 演示课程购买链路的收口页
-
-### 9. Lesson / Assessment 详情
-
-当前已实现：
-- lesson 详情展示
-- 课程资料、词汇、语法展示
-- 已报名课程支持练习内容展示
-- assessment 详情展示
-
-模块说明：
-- 演示课程学习内容的纵向展开
-
-## 当前以 Demo 状态驱动的核心交互
-
-当前 demo 主要通过以下本地状态驱动变化：
-- `purchasedCourseIds`
-- `lastPurchasedCourseId`
-- `homeworkSubmitted`
-- `dailyTaskCompleted`
-- `learnedVocabIds`
-- `readNotificationIds`
-- `activitySignedUp`
-
-这些状态保存在小程序本地 storage 中，用于支撑页面之间的联动效果。
-
-## 当前完成度判断
-
-从演示角度看，当前 demo 已经具备以下能力：
-- 可以展示主要学习服务页面
-- 可以完成几条关键业务闭环
-- 可以在多个页面之间看到状态联动
-
-但从正式产品角度看，当前仍然属于：
-- 前端演示驱动
-- 本地假数据驱动
-- 无真实后端接口
-- 无真实用户、订单、课程、活动数据来源
+- [页面清单](./page-inventory.md)
+- [功能闭环路径](./feature-closed-loops.md)
+- [数据架构](./data-architecture.md)
+- `docs/ja/detailed-design/`
