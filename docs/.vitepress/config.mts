@@ -52,13 +52,34 @@ const jaNav = [
 
 const jaSidebar = [
   {
-    text: '基本文書',
+    text: 'プロジェクト文書',
     items: [
       { text: 'プロジェクト概要', link: '/ja/project-overview' },
       { text: 'ページ一覧', link: '/ja/page-inventory' },
       { text: 'データ構成', link: '/ja/data-architecture' },
+      { text: '現在の Demo 機能', link: '/ja/demo-features' },
+      { text: '機能クローズドループ', link: '/ja/feature-closed-loops' },
+      { text: 'Demo から正式版への移行', link: '/ja/project-transition-plan' },
+      { text: '今後の API 一覧', link: '/ja/api-requirements' },
+      { text: '製品要求仕様', link: '/ja/product-requirements' },
+      { text: 'データエンティティ設計', link: '/ja/data-entities' },
+      { text: 'API フィールド契約', link: '/ja/api-field-contracts' },
       { text: '開発ガイド', link: '/ja/development-guide' },
+    ],
+  },
+  {
+    text: 'アーキテクチャ文書',
+    items: [
       { text: '現在の安定基線', link: '/ja/architecture/current-stable-baseline' },
+      { text: 'Miniapp 境界', link: '/ja/architecture/miniapp-boundaries' },
+      { text: 'プロジェクト構造ブループリント', link: '/ja/architecture/project-structure' },
+      { text: '共有層抽出計画', link: '/ja/architecture/shared-extraction-plan' },
+    ],
+  },
+  {
+    text: '文書サイト',
+    items: [
+      { text: '文書サイト計画', link: '/ja/docs-site-plan' },
       { text: '翻訳範囲', link: '/ja/translation-status' },
     ],
   },
@@ -78,8 +99,29 @@ const enSidebar = [
       { text: 'Project Overview', link: '/en/project-overview' },
       { text: 'Page Inventory', link: '/en/page-inventory' },
       { text: 'Data Architecture', link: '/en/data-architecture' },
+      { text: 'Current Demo Features', link: '/en/demo-features' },
+      { text: 'Feature Closed Loops', link: '/en/feature-closed-loops' },
+      { text: 'Demo To Production Transition', link: '/en/project-transition-plan' },
+      { text: 'Upcoming API Requirements', link: '/en/api-requirements' },
+      { text: 'Product Requirements', link: '/en/product-requirements' },
+      { text: 'Data Entity Design', link: '/en/data-entities' },
+      { text: 'API Field Contracts', link: '/en/api-field-contracts' },
       { text: 'Development Guide', link: '/en/development-guide' },
+    ],
+  },
+  {
+    text: 'Architecture Docs',
+    items: [
       { text: 'Current Stable Baseline', link: '/en/architecture/current-stable-baseline' },
+      { text: 'Miniapp Boundaries', link: '/en/architecture/miniapp-boundaries' },
+      { text: 'Project Structure Blueprint', link: '/en/architecture/project-structure' },
+      { text: 'Shared Layer Extraction Plan', link: '/en/architecture/shared-extraction-plan' },
+    ],
+  },
+  {
+    text: 'Docs Site',
+    items: [
+      { text: 'Docs Site Plan', link: '/en/docs-site-plan' },
       { text: 'Translation Scope', link: '/en/translation-status' },
     ],
   },
