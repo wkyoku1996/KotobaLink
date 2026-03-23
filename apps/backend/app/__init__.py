@@ -1,0 +1,1 @@
+"""KotobaLink backend package."""

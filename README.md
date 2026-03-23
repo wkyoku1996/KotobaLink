@@ -31,6 +31,8 @@ KotobaLink 当前是一个以微信小程序为核心的学习服务 demo 项目
 ```text
 KotobaLink/
   apps/
+    admin/
+    backend/
     miniapp/
   packages/
     shared/
@@ -57,6 +59,7 @@ KotobaLink/
 - [项目概览](./docs/project-overview.md)
 - [页面清单](./docs/page-inventory.md)
 - [数据架构](./docs/data-architecture.md)
+- [教材 JSON Schema（草案）](./docs/material-json-schema.md)
 - [当前 Demo 功能说明](./docs/demo-features.md)
 - [功能闭环路径](./docs/feature-closed-loops.md)
 - [从 Demo 到正式项目的改造工作](./docs/project-transition-plan.md)
@@ -74,10 +77,26 @@ pnpm docs:dev
 
 ## 当前技术方向
 
+- `apps/backend`：FastAPI 后端骨架
+- `apps/admin`：React 管理后台骨架
 - `apps/miniapp`：小程序专属代码
 - `packages/types`：稳定数据契约
 - `packages/shared`：可复用纯函数
 - `docs`：项目说明与架构文档
+
+## 新增开发入口
+
+整套本地开发环境建议通过 Docker Compose 启动：
+
+```bash
+docker compose -f infra/docker/compose.yaml up --build
+```
+
+启动后默认入口：
+
+- Admin：`http://localhost:5173`
+- Backend：`http://localhost:8000`
+- API Docs：`http://localhost:8000/docs`
 
 ## 后续方向
 

@@ -7,6 +7,11 @@
     "lint": "echo \"Define per-app lint commands as the workspace grows\"",
     "test": "echo \"Define per-app test commands as the workspace grows\"",
     "miniapp:check": "node -e \"require('./apps/miniapp/services/demo-service')\"",
+    "admin:dev": "pnpm --filter @kotobalink/admin dev",
+    "admin:build": "pnpm --filter @kotobalink/admin build",
+    "stack:up": "docker compose -f infra/docker/compose.yaml up --build",
+    "stack:down": "docker compose -f infra/docker/compose.yaml down",
+    "stack:logs": "docker compose -f infra/docker/compose.yaml logs -f",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

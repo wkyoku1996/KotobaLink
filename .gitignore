@@ -1,8 +1,15 @@
 node_modules/
+.pnpm-store/
 .vscode/
 .DS_Store
 Thumbs.db
 dist/
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 docs/.vitepress/.temp/
