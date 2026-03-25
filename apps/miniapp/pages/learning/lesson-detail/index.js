@@ -1,4 +1,4 @@
-const { getLessonDetail } = require('../../../services/demo-service')
+const { getMyPublishedLessonDetail, getPublishedLessonDetail } = require('../../../services/course-service')
 const { withAccessibility } = require('../../../behaviors/with-accessibility')
 
 Page(withAccessibility({
@@ -8,8 +8,10 @@ Page(withAccessibility({
     practiceResult: null,
   },
 
-  onLoad(options) {
-    const lesson = getLessonDetail(options.courseId, options.lessonId)
+  async onLoad(options) {
+    const lesson = options.enrolled === '1'
+      ? await getMyPublishedLessonDetail(options.courseId, options.lessonId)
+      : await getPublishedLessonDetail(options.courseId, options.lessonId)
 
     if (!lesson) {
       return

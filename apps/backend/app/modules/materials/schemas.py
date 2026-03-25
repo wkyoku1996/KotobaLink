@@ -214,3 +214,122 @@ class MaterialJsonV2Document(BaseModel):
 
 class MaterialJsonV2ExportResponse(ApiResponse):
     data: MaterialJsonV2Document
+
+
+class PackageTemplateResourceMeta(BaseModel):
+    file_size: int | None
+    duration_seconds: int | None
+
+
+class PackageTemplateResource(BaseModel):
+    id: str
+    file_name: str
+    resource_type: str
+    mime_type: str
+    storage_key: str
+    file_url: str
+    visibility: str
+    meta: PackageTemplateResourceMeta
+
+
+class PackageTemplateContent(BaseModel):
+    id: str
+    type: str
+    title: str
+    sort_order: int
+    enabled: bool
+    data: dict
+    resources: list[PackageTemplateResource]
+
+
+class PackageTemplateUnit(BaseModel):
+    id: str
+    title: str
+    code: str | None
+    sort_order: int
+    status: str
+    learning_goal: str | None
+    contents: list[PackageTemplateContent]
+
+
+class PackageTemplateCourse(BaseModel):
+    id: str
+    title: str
+    status: str
+    summary: str | None
+    units: list[PackageTemplateUnit]
+
+
+class PackageTemplateDocument(BaseModel):
+    schema_version: str
+    id: str
+    title: str
+    series: str
+    level: str
+    language: str
+    version: str
+    summary: str | None
+    status: str
+    visibility: str
+    tags: list[str]
+    courses: list[PackageTemplateCourse]
+
+
+class PackageTemplateResponse(ApiResponse):
+    data: PackageTemplateDocument
+
+
+class PackageTemplateDeleteData(BaseModel):
+    id: str
+    deleted: bool
+
+
+class PackageTemplateDeleteResponse(ApiResponse):
+    data: PackageTemplateDeleteData
+
+
+class MaterialReleaseVersionItem(BaseModel):
+    id: str
+    material_id: str
+    material_title: str
+    version_number: str
+    status: str
+    note: str | None
+    published_by: str | None
+    published_at: str | None
+    is_live: bool
+
+
+class MaterialReleaseVersionDetail(MaterialReleaseVersionItem):
+    snapshot_json: dict
+
+
+class MaterialReleaseCreateInput(BaseModel):
+    note: str | None = None
+    published_by: str | None = None
+
+
+class MaterialReleaseListResponse(ApiResponse):
+    data: list[MaterialReleaseVersionItem]
+
+
+class MaterialReleaseDetailResponse(ApiResponse):
+    data: MaterialReleaseVersionDetail
+
+
+class MaterialReleaseDeleteData(BaseModel):
+    id: str
+    deleted: bool
+
+
+class MaterialReleaseDeleteResponse(ApiResponse):
+    data: MaterialReleaseDeleteData
+
+
+class PackageTemplateSaveData(BaseModel):
+    template: PackageTemplateDocument
+    created_release: MaterialReleaseVersionDetail
+
+
+class PackageTemplateSaveResponse(ApiResponse):
+    data: PackageTemplateSaveData

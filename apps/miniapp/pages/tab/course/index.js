@@ -1,4 +1,5 @@
 const { getDemoData } = require('../../../services/demo-service')
+const { getMyPublishedCourses, getPublishedCourses } = require('../../../services/course-service')
 const { withAccessibility } = require('../../../behaviors/with-accessibility')
 
 Page(withAccessibility({
@@ -12,13 +13,17 @@ Page(withAccessibility({
     this.refreshCourses()
   },
 
-  refreshCourses() {
+  async refreshCourses() {
     const demoData = getDemoData()
+    const [myCourses, publishedCourses] = await Promise.all([
+      getMyPublishedCourses(),
+      getPublishedCourses(),
+    ])
 
     this.setData({
       demo: demoData,
-      enrolledCourses: demoData.learningArchive.enrolledCourses,
-      purchasableCourses: demoData.courses.filter((item) => !item.isEnrolled),
+      enrolledCourses: myCourses,
+      purchasableCourses: publishedCourses,
     })
   },
 

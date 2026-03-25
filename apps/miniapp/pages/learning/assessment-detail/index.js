@@ -1,4 +1,7 @@
-const { getAssessmentDetail } = require('../../../services/demo-service')
+const {
+  getMyPublishedAssessmentDetail,
+  getPublishedAssessmentDetail,
+} = require('../../../services/course-service')
 const { withAccessibility } = require('../../../behaviors/with-accessibility')
 
 Page(withAccessibility({
@@ -8,8 +11,10 @@ Page(withAccessibility({
     result: null,
   },
 
-  onLoad(options) {
-    const assessment = getAssessmentDetail(options.courseId, options.assessmentId)
+  async onLoad(options) {
+    const assessment = options.enrolled === '1'
+      ? await getMyPublishedAssessmentDetail(options.courseId, options.assessmentId)
+      : await getPublishedAssessmentDetail(options.courseId, options.assessmentId)
     if (!assessment) {
       return
     }

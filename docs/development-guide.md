@@ -109,6 +109,41 @@ docker compose -f infra/docker/compose.yaml up --build
 - API Docs：`http://localhost:8000/docs`
 - Health Check：`http://localhost:8000/health`
 
+### 小程序接口环境
+
+当前小程序接口地址已经拆成两套思路：
+
+- 本地开发：走 `http://127.0.0.1:8000/api/v1`
+- 线上体验版 / 正式版：预留单独的 HTTPS 接口地址
+
+当前配置文件：
+
+- 小程序接口配置：[apps/miniapp/config/api.js](../apps/miniapp/config/api.js)
+- 请求封装：[apps/miniapp/services/api-service.js](../apps/miniapp/services/api-service.js)
+
+当前行为：
+
+- `develop` 环境默认走本地 `127.0.0.1`
+- `trial / release` 环境应改成线上 HTTPS 域名
+
+当前代码里已经预留：
+
+- `LOCAL_API_BASE_URL`
+- `ONLINE_API_BASE_URL`
+
+后续部署到 AWS 或其他外网环境时，需要做这几步：
+
+1. 把 `ONLINE_API_BASE_URL` 改成真实线上接口地址  
+   例如：`https://api.example.com/api/v1`
+2. 在微信小程序后台配置合法 request 域名
+3. 重新上传体验版 / 正式版
+
+为什么开发者工具能访问真实数据，但手机体验版还是会回退到 demo：
+
+- 开发者工具可以关闭合法域名校验，并访问你电脑本地的 `127.0.0.1`
+- 手机体验版访问不到你电脑本地的 `127.0.0.1`
+- 如果线上接口地址没有配置好，请求失败后就会回退到当前的 demo 数据逻辑
+
 ### 单独启动管理后台
 
 ```bash

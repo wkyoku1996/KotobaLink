@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -95,6 +95,7 @@ class TeachingMaterial(UuidPrimaryKeyMixin, TimestampMixin, Base):
     course: Mapped[Course | None] = relationship(back_populates="materials")
     units: Mapped[list[MaterialUnit]] = relationship(back_populates="material")
     publish_records: Mapped[list[MaterialPublishRecord]] = relationship(back_populates="material")
+    release_versions: Mapped[list[MaterialReleaseVersion]] = relationship(back_populates="material")
 
 
 class MaterialUnit(UuidPrimaryKeyMixin, TimestampMixin, Base):
@@ -153,3 +154,18 @@ class MaterialPublishRecord(UuidPrimaryKeyMixin, TimestampMixin, Base):
     published_by: Mapped[str | None] = mapped_column(String(120))
 
     material: Mapped[TeachingMaterial] = relationship(back_populates="publish_records")
+
+
+class MaterialReleaseVersion(UuidPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "material_release_versions"
+
+    material_id: Mapped[str] = mapped_column(ForeignKey("teaching_materials.id"), nullable=False, index=True)
+    version_number: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="draft")
+    snapshot_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    note: Mapped[str | None] = mapped_column(Text)
+    published_by: Mapped[str | None] = mapped_column(String(120))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    is_live: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    material: Mapped[TeachingMaterial] = relationship(back_populates="release_versions")

@@ -25,45 +25,46 @@ from app.db.session import SessionLocal, engine
 DEMO_STUDENT_ID = "student-demo-001"
 COURSE_FOUNDATIONS_ID = "course-001"
 COURSE_SPRINT_ID = "course-002"
+COURSE_TRAVEL_ID = "course-003"
 ENROLLMENT_ID = "enrollment-001"
 ORDER_ID = "order-001"
 
 MATERIALS = [
     {
         "id": "material-001",
-        "title": "Marugoto Starter A1",
-        "series": "Marugoto",
+        "title": "入门口语套餐 A1",
+        "series": "综合日语入门",
         "level": "A1",
         "language": "jp-cn",
         "version": "v2.1",
-        "summary": "Starter-level integrated Japanese material with article, vocabulary, grammar, exercise, audio and workbook resources.",
-        "status": "published",
+        "summary": "适合零基础到入门阶段的综合日语教学套餐，包含课文、词汇、语法、习题、音频与讲义资源。",
+        "status": "draft",
         "visibility": "teacher",
         "course_id": COURSE_FOUNDATIONS_ID,
     },
     {
         "id": "material-002",
-        "title": "Marugoto Elementary A2",
-        "series": "Marugoto",
+        "title": "生活交流套餐 A2",
+        "series": "生活场景会话",
         "level": "A2",
         "language": "jp-cn",
         "version": "v1.8",
-        "summary": "Elementary Japanese material focused on travel, schedules, explanations and classroom interaction.",
-        "status": "published",
+        "summary": "围绕出行、路线、约见等日常生活场景设计的进阶教学套餐，适合 A2 阶段口语与阅读训练。",
+        "status": "draft",
         "visibility": "teacher",
         "course_id": COURSE_SPRINT_ID,
     },
     {
         "id": "material-003",
-        "title": "Kotoba Travel Booster",
-        "series": "KotobaLink Original",
+        "title": "旅行场景强化套餐",
+        "series": "KotobaLink 自研",
         "level": "A2/B1",
         "language": "jp-cn",
         "version": "v0.9",
-        "summary": "Scenario-driven Japanese speaking pack around airport, hotel and sightseeing communication.",
+        "summary": "围绕机场、酒店、观光等旅行沟通场景设计的强化训练套餐，用于口语角色扮演与情境表达。",
         "status": "draft",
         "visibility": "teacher",
-        "course_id": COURSE_FOUNDATIONS_ID,
+        "course_id": COURSE_TRAVEL_ID,
     },
 ]
 
@@ -71,81 +72,81 @@ UNITS = [
     {
         "id": "material-unit-001",
         "material_id": "material-001",
-        "title": "Topic 1: かつどう",
+        "title": "第1课：はじめまして",
         "code": "topic-01",
-        "learning_goal": "Warm-up conversation, greetings and class entry practice.",
+        "learning_goal": "掌握初次见面时的基本问候、自我介绍和课堂入场表达。",
         "sort_order": 1,
-        "status": "published",
+        "status": "draft",
     },
     {
         "id": "material-unit-002",
         "material_id": "material-001",
-        "title": "Topic 2: しゅみ",
+        "title": "第2课：しゅみ",
         "code": "topic-02",
-        "learning_goal": "Basic self-expression around hobbies and preferences.",
+        "learning_goal": "围绕兴趣爱好进行简单表达，能说明自己喜欢做什么。",
         "sort_order": 2,
-        "status": "published",
+        "status": "draft",
     },
     {
         "id": "material-unit-003",
         "material_id": "material-001",
-        "title": "Topic 3: たべもの",
+        "title": "第3课：たべもの",
         "code": "topic-03",
-        "learning_goal": "Talk about food preferences and simple ordering situations.",
+        "learning_goal": "能够表达饮食喜好，并完成简单的点餐会话。",
         "sort_order": 3,
         "status": "draft",
     },
     {
         "id": "material-unit-004",
         "material_id": "material-002",
-        "title": "Lesson 1: りょこうの じゅんび",
+        "title": "第1课：りょこうの じゅんび",
         "code": "lesson-01",
-        "learning_goal": "Prepare travel plans and explain schedule details.",
+        "learning_goal": "能够讨论旅行准备事项，并说明简单的时间安排。",
         "sort_order": 1,
-        "status": "published",
+        "status": "draft",
     },
     {
         "id": "material-unit-005",
         "material_id": "material-002",
-        "title": "Lesson 2: でんしゃと バス",
+        "title": "第2课：でんしゃと バス",
         "code": "lesson-02",
-        "learning_goal": "Understand simple route maps and transportation announcements.",
+        "learning_goal": "理解基础交通路线图，并能表达乘车、换乘相关信息。",
         "sort_order": 2,
-        "status": "published",
+        "status": "draft",
     },
     {
         "id": "material-unit-006",
         "material_id": "material-002",
-        "title": "Lesson 3: まちあわせ",
+        "title": "第3课：まちあわせ",
         "code": "lesson-03",
-        "learning_goal": "Arrange meeting points and communicate delays politely.",
+        "learning_goal": "能够约定见面地点，并礼貌地说明迟到和变更情况。",
         "sort_order": 3,
         "status": "draft",
     },
     {
         "id": "material-unit-007",
         "material_id": "material-003",
-        "title": "Scene 1: Airport Check-in",
+        "title": "场景1：机场值机",
         "code": "scene-01",
-        "learning_goal": "Handle airport check-in and baggage-related questions.",
+        "learning_goal": "掌握机场值机、行李托运与基础问答表达。",
         "sort_order": 1,
-        "status": "published",
+        "status": "draft",
     },
     {
         "id": "material-unit-008",
         "material_id": "material-003",
-        "title": "Scene 2: Hotel Front Desk",
+        "title": "场景2：酒店前台",
         "code": "scene-02",
-        "learning_goal": "Check in at a hotel and ask for basic services.",
+        "learning_goal": "掌握酒店入住、确认预约和基础服务请求表达。",
         "sort_order": 2,
-        "status": "published",
+        "status": "draft",
     },
 ]
 
 ASSETS = [
     {
         "id": "asset-001",
-        "file_name": "topic01-dialogue.wav",
+        "file_name": "第1课-初次见面对话音频.wav",
         "asset_type": "audio",
         "mime_type": "audio/wav",
         "storage_key": "materials/demo/topic01-dialogue.wav",
@@ -156,7 +157,7 @@ ASSETS = [
     },
     {
         "id": "asset-002",
-        "file_name": "starter-workbook.pdf",
+        "file_name": "入门套餐-课堂练习册.pdf",
         "asset_type": "pdf",
         "mime_type": "application/pdf",
         "storage_key": "materials/demo/starter-workbook.pdf",
@@ -167,7 +168,7 @@ ASSETS = [
     },
     {
         "id": "asset-003",
-        "file_name": "topic02-hobby-dialogue.wav",
+        "file_name": "第2课-兴趣爱好对话音频.wav",
         "asset_type": "audio",
         "mime_type": "audio/wav",
         "storage_key": "materials/demo/topic02-hobby-dialogue.wav",
@@ -178,7 +179,7 @@ ASSETS = [
     },
     {
         "id": "asset-004",
-        "file_name": "topic02-vocabulary-sheet.pdf",
+        "file_name": "第2课-兴趣词汇补充表.pdf",
         "asset_type": "pdf",
         "mime_type": "application/pdf",
         "storage_key": "materials/demo/topic02-vocabulary-sheet.pdf",
@@ -189,7 +190,7 @@ ASSETS = [
     },
     {
         "id": "asset-005",
-        "file_name": "topic03-menu-photo.svg",
+        "file_name": "第3课-菜单图卡.svg",
         "asset_type": "image",
         "mime_type": "image/svg+xml",
         "storage_key": "materials/demo/topic03-menu-photo.svg",
@@ -200,7 +201,7 @@ ASSETS = [
     },
     {
         "id": "asset-006",
-        "file_name": "a2-travel-dialogue.wav",
+        "file_name": "第1课-旅行计划对话音频.wav",
         "asset_type": "audio",
         "mime_type": "audio/wav",
         "storage_key": "materials/demo/a2-travel-dialogue.wav",
@@ -211,7 +212,7 @@ ASSETS = [
     },
     {
         "id": "asset-007",
-        "file_name": "a2-route-reading.pdf",
+        "file_name": "第1课-行程阅读材料.pdf",
         "asset_type": "pdf",
         "mime_type": "application/pdf",
         "storage_key": "materials/demo/a2-route-reading.pdf",
@@ -222,7 +223,7 @@ ASSETS = [
     },
     {
         "id": "asset-008",
-        "file_name": "travel-airport-roleplay.pdf",
+        "file_name": "场景1-机场值机角色卡.pdf",
         "asset_type": "pdf",
         "mime_type": "application/pdf",
         "storage_key": "materials/demo/travel-airport-roleplay.pdf",
@@ -233,7 +234,7 @@ ASSETS = [
     },
     {
         "id": "asset-009",
-        "file_name": "hotel-frontdesk-dialogue.wav",
+        "file_name": "场景2-酒店前台对话音频.wav",
         "asset_type": "audio",
         "mime_type": "audio/wav",
         "storage_key": "materials/demo/hotel-frontdesk-dialogue.wav",
@@ -244,7 +245,7 @@ ASSETS = [
     },
     {
         "id": "asset-010",
-        "file_name": "hotel-service-card.svg",
+        "file_name": "场景2-酒店服务图卡.svg",
         "asset_type": "image",
         "mime_type": "image/svg+xml",
         "storage_key": "materials/demo/hotel-service-card.svg",
@@ -260,7 +261,7 @@ ITEMS = [
         "id": "material-item-001",
         "unit_id": "material-unit-001",
         "asset_id": "asset-001",
-        "title": "Greeting Dialogue",
+        "title": "对话：初次见面",
         "item_type": "audio",
         "content_text": "A: はじめまして。B: はじめまして。よろしくおねがいします。",
         "sort_order": 1,
@@ -315,9 +316,9 @@ ITEMS = [
         "id": "material-item-006",
         "unit_id": "material-unit-001",
         "asset_id": "asset-002",
-        "title": "Workbook PDF",
+        "title": "课堂练习册",
         "item_type": "worksheet",
-        "content_text": "Workbook activity sheet for topic review and homework.",
+        "content_text": "用于课后复习和家庭作业的练习册。",
         "sort_order": 6,
         "visibility": "teacher",
         "required": False,
@@ -326,7 +327,7 @@ ITEMS = [
         "id": "material-item-007",
         "unit_id": "material-unit-002",
         "asset_id": "asset-003",
-        "title": "Hobby Dialogue",
+        "title": "对话：兴趣爱好",
         "item_type": "audio",
         "content_text": "A: しゅみは なんですか。B: えいがを みることです。",
         "sort_order": 1,
@@ -491,9 +492,9 @@ ITEMS = [
         "id": "material-item-022",
         "unit_id": "material-unit-007",
         "asset_id": "asset-008",
-        "title": "Airport Check-in Roleplay Sheet",
+        "title": "机场值机场景角色卡",
         "item_type": "resource",
-        "content_text": "值机场景角色卡和 baggage questions。",
+        "content_text": "机场值机情境角色卡，用于课堂角色扮演与提问训练。",
         "sort_order": 1,
         "visibility": "teacher",
         "required": True,
@@ -513,7 +514,7 @@ ITEMS = [
         "id": "material-item-024",
         "unit_id": "material-unit-008",
         "asset_id": "asset-009",
-        "title": "Hotel Front Desk Dialogue",
+        "title": "对话：酒店前台",
         "item_type": "audio",
         "content_text": "チェックイン おねがいします。よやく しています。",
         "sort_order": 1,
@@ -524,7 +525,7 @@ ITEMS = [
         "id": "material-item-025",
         "unit_id": "material-unit-008",
         "asset_id": "asset-010",
-        "title": "Service Card",
+        "title": "酒店服务图卡",
         "item_type": "image",
         "content_text": "房间服务图卡，用于课堂快速问答。",
         "sort_order": 2,
@@ -550,8 +551,8 @@ PUBLISH_RECORDS = [
         "material_id": "material-001",
         "version": "v2.1",
         "publish_scope": "teacher",
-        "status": "published",
-        "note": "Expanded with vocabulary, grammar and exercise sections for A1.",
+        "status": "draft",
+        "note": "当前仍处于编辑整理阶段，词汇、语法和习题模块尚未进入正式发布流程。",
         "published_by": "ops_admin",
     },
     {
@@ -559,8 +560,8 @@ PUBLISH_RECORDS = [
         "material_id": "material-002",
         "version": "v1.8",
         "publish_scope": "teacher",
-        "status": "published",
-        "note": "Travel and route-reading support material for A2 learners.",
+        "status": "draft",
+        "note": "当前仍处于编辑整理阶段，出行与路线阅读配套材料尚未进入正式发布流程。",
         "published_by": "ops_admin",
     },
     {
@@ -569,79 +570,111 @@ PUBLISH_RECORDS = [
         "version": "v0.9",
         "publish_scope": "teacher",
         "status": "draft",
-        "note": "Original travel speaking pack under internal review.",
+        "note": "旅行场景强化内容仍在内部整理中，当前仅供教师试排课程目录。",
         "published_by": "ops_admin",
     },
 ]
 
 
 def seed_core_demo_data(session: Session) -> None:
-    student = Student(
-        id=DEMO_STUDENT_ID,
-        name="Demo Student",
-        avatar=None,
-        level="N4",
-        class_name="Evening A",
-        membership_status="active",
-    )
-    course_foundations = Course(
-        id=COURSE_FOUNDATIONS_ID,
-        name="Conversation Foundations",
-        course_type="conversation",
-        duration="12 weeks",
-        price=19800,
-        benefit="Starter Pack",
-        summary="Introductory speaking course for daily conversation.",
-        teacher="Sato Sensei",
-        class_type="group",
-        class_schedule="Tue / Thu 19:30",
-        classroom="Tokyo Online Room A",
-        status="published",
-    )
-    course_sprint = Course(
-        id=COURSE_SPRINT_ID,
-        name="JLPT Sprint",
-        course_type="exam",
-        duration="8 weeks",
-        price=24800,
-        benefit="Mock Test Pack",
-        summary="Focused prep course for short-cycle JLPT review.",
-        teacher="Takeda Sensei",
-        class_type="group",
-        class_schedule="Sat 10:00",
-        classroom="Tokyo Online Room B",
-        status="draft",
-    )
-    enrollment = Enrollment(
-        id=ENROLLMENT_ID,
-        student_id=DEMO_STUDENT_ID,
-        course_id=COURSE_FOUNDATIONS_ID,
-        class_name="Evening A",
-        teacher="Sato Sensei",
-        classroom="Tokyo Online Room A",
-        service_status="active",
-        lesson_progress=4,
-    )
-    order = Order(
-        id=ORDER_ID,
-        student_id=DEMO_STUDENT_ID,
-        course_id=COURSE_FOUNDATIONS_ID,
-        business_type="course",
-        target_id=COURSE_FOUNDATIONS_ID,
-        target_name="Conversation Foundations",
-        class_name="Evening A",
-        teacher="Sato Sensei",
-        price=19800,
-        benefit="Starter Pack",
-        status="completed",
-        payment_status="paid",
-        paid=True,
-    )
-    session.add_all([student, course_foundations, course_sprint, enrollment, order])
+    student = session.get(Student, DEMO_STUDENT_ID)
+    if student is None:
+        student = Student(id=DEMO_STUDENT_ID)
+        session.add(student)
+    student.name = "王美"
+    student.avatar = None
+    student.level = "N4"
+    student.class_name = "晚间 A 班"
+    student.membership_status = "active"
+
+    course_foundations = session.get(Course, COURSE_FOUNDATIONS_ID)
+    if course_foundations is None:
+        course_foundations = Course(id=COURSE_FOUNDATIONS_ID)
+        session.add(course_foundations)
+    course_foundations.name = "入门口语课程 A1"
+    course_foundations.course_type = "premium"
+    course_foundations.duration = "12 周"
+    course_foundations.price = 19800
+    course_foundations.benefit = "按内容包开放学习与作业反馈"
+    course_foundations.summary = "适合零基础到入门阶段的综合日语口语课程。"
+    course_foundations.teacher = "佐藤老师"
+    course_foundations.class_type = "小班直播"
+    course_foundations.class_schedule = "每周二 / 周四 19:30"
+    course_foundations.classroom = "东京线上教室 A"
+    course_foundations.status = "draft"
+
+    course_sprint = session.get(Course, COURSE_SPRINT_ID)
+    if course_sprint is None:
+        course_sprint = Course(id=COURSE_SPRINT_ID)
+        session.add(course_sprint)
+    course_sprint.name = "生活交流课程 A2"
+    course_sprint.course_type = "premium"
+    course_sprint.duration = "8 周"
+    course_sprint.price = 24800
+    course_sprint.benefit = "生活场景表达与阅读强化"
+    course_sprint.summary = "围绕出行、路线、约见等生活交流主题的进阶课程。"
+    course_sprint.teacher = "武田老师"
+    course_sprint.class_type = "周末直播班"
+    course_sprint.class_schedule = "每周六 10:00"
+    course_sprint.classroom = "东京线上教室 B"
+    course_sprint.status = "draft"
+
+    course_travel = session.get(Course, COURSE_TRAVEL_ID)
+    if course_travel is None:
+        course_travel = Course(id=COURSE_TRAVEL_ID)
+        session.add(course_travel)
+    course_travel.name = "旅行场景强化课程"
+    course_travel.course_type = "special"
+    course_travel.duration = "6 周"
+    course_travel.price = 16800
+    course_travel.benefit = "机场、酒店、观光场景表达强化"
+    course_travel.summary = "面向旅行交流需求设计的情境口语强化课程。"
+    course_travel.teacher = "中村老师"
+    course_travel.class_type = "情境口语工作坊"
+    course_travel.class_schedule = "每周日 14:00"
+    course_travel.classroom = "东京线上教室 C"
+    course_travel.status = "draft"
+
+    enrollment = session.get(Enrollment, ENROLLMENT_ID)
+    if enrollment is None:
+        enrollment = Enrollment(id=ENROLLMENT_ID)
+        session.add(enrollment)
+    enrollment.student_id = DEMO_STUDENT_ID
+    enrollment.course_id = COURSE_FOUNDATIONS_ID
+    enrollment.class_name = "晚间 A 班"
+    enrollment.teacher = "佐藤老师"
+    enrollment.classroom = "东京线上教室 A"
+    enrollment.service_status = "active"
+    enrollment.lesson_progress = 4
+
+    order = session.get(Order, ORDER_ID)
+    if order is None:
+        order = Order(id=ORDER_ID)
+        session.add(order)
+    order.student_id = DEMO_STUDENT_ID
+    order.course_id = COURSE_FOUNDATIONS_ID
+    order.business_type = "course"
+    order.target_id = COURSE_FOUNDATIONS_ID
+    order.target_name = "入门口语课程 A1"
+    order.class_name = "晚间 A 班"
+    order.teacher = "佐藤老师"
+    order.price = 19800
+    order.benefit = "按内容包开放学习与作业反馈"
+    order.status = "completed"
+    order.payment_status = "paid"
+    order.paid = True
+
+    session.add_all([student, course_foundations, course_sprint, course_travel, enrollment, order])
     session.commit()
 
 
 def seed_material_demo_data(session: Session) -> None:
+    seed_material_ids = {material["id"] for material in MATERIALS}
+    seed_unit_ids = {unit["id"] for unit in UNITS}
+    seed_asset_ids = {asset["id"] for asset in ASSETS}
+    seed_item_ids = {item["id"] for item in ITEMS}
+    seed_publish_ids = {record["id"] for record in PUBLISH_RECORDS}
+
     for material_data in MATERIALS:
         material = session.get(TeachingMaterial, material_data["id"])
         if material is None:
@@ -715,6 +748,44 @@ def seed_material_demo_data(session: Session) -> None:
         record.note = publish_data["note"]
         record.published_by = publish_data["published_by"]
 
+    stray_publish_records = session.execute(
+        select(MaterialPublishRecord).where(
+            MaterialPublishRecord.material_id.in_(seed_material_ids),
+            MaterialPublishRecord.id.not_in(seed_publish_ids),
+        )
+    ).scalars().all()
+    for record in stray_publish_records:
+        session.delete(record)
+
+    stray_items = session.execute(
+        select(MaterialItem)
+        .join(MaterialUnit, MaterialItem.unit_id == MaterialUnit.id)
+        .where(
+            MaterialUnit.material_id.in_(seed_material_ids),
+            MaterialItem.id.not_in(seed_item_ids),
+        )
+    ).scalars().all()
+    for item in stray_items:
+        session.delete(item)
+
+    stray_units = session.execute(
+        select(MaterialUnit).where(
+            MaterialUnit.material_id.in_(seed_material_ids),
+            MaterialUnit.id.not_in(seed_unit_ids),
+        )
+    ).scalars().all()
+    for unit in stray_units:
+        session.delete(unit)
+
+    session.flush()
+
+    stray_assets = session.execute(
+        select(MediaAsset).where(MediaAsset.id.not_in(seed_asset_ids))
+    ).scalars().all()
+    for asset in stray_assets:
+        if not asset.items:
+            session.delete(asset)
+
     session.commit()
 
 
@@ -769,10 +840,7 @@ def _write_demo_pdf(file_path: Path, label: str) -> None:
 
 
 def ensure_seed_data(session: Session) -> None:
-    has_students = session.execute(select(Student.id).limit(1)).scalar_one_or_none()
-    if has_students is None:
-        seed_core_demo_data(session)
-
+    seed_core_demo_data(session)
     seed_material_demo_data(session)
 
 

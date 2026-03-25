@@ -4,16 +4,18 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
 import { ModuleFrame } from '../components/ModuleFrame';
-import { PageToolbar } from '../components/PageToolbar';
 import { useMaterialData } from '../hooks/useMaterialData';
 import {
-  fetchMaterialJsonDocument,
-  getMaterialJsonExportUrl,
   MEDIA_BASE_URL,
-  type MaterialJsonV2Asset,
-  type MaterialJsonV2Document,
-  type MaterialJsonV2Section,
-  type MaterialJsonV2Unit,
+  fetchMaterialReleaseVersionDetail,
+  fetchMaterialReleaseVersions,
+  fetchPackageTemplate,
+  getPackageTemplateExportUrl,
+  savePackageTemplate,
+  type PackageTemplateContent,
+  type PackageTemplateDocument,
+  type PackageTemplateResource,
+  type PackageTemplateUnit,
 } from '../lib/api';
 
 type EditorNode =
@@ -23,9 +25,9 @@ type EditorNode =
   | { kind: 'resource'; materialId: string; unitId: string; contentId: string; assetId: string };
 
 type ContentLibraryItem = {
-  content: MaterialJsonV2Section;
-  sourceUnit: MaterialJsonV2Unit;
-  resources: MaterialJsonV2Asset[];
+  content: PackageTemplateContent;
+  sourceUnit: PackageTemplateUnit;
+  resources: PackageTemplateResource[];
   preview: string;
 };
 
@@ -65,40 +67,28 @@ function parseNodeKey(key: string): EditorNode | null {
   return null;
 }
 
-function cloneDocument(document: MaterialJsonV2Document) {
+function cloneDocument(document: PackageTemplateDocument) {
   return structuredClone(document);
 }
 
-function findUnit(document: MaterialJsonV2Document, unitId: string) {
-  return document.units.find((unit) => unit.id === unitId) ?? null;
+function getPrimaryCourse(document: PackageTemplateDocument | null) {
+  return document?.courses[0] ?? null;
 }
 
-function findContent(document: MaterialJsonV2Document, unitId: string, contentId: string) {
-  return findUnit(document, unitId)?.sections.find((section) => section.id === contentId) ?? null;
+function findUnit(document: PackageTemplateDocument, unitId: string) {
+  return getPrimaryCourse(document)?.units.find((unit) => unit.id === unitId) ?? null;
 }
 
-function collectAssetRefs(value: unknown): string[] {
-  if (typeof value === 'string' && value.startsWith('asset-')) {
-    return [value];
-  }
-  if (Array.isArray(value)) {
-    return value.flatMap((item) => collectAssetRefs(item));
-  }
-  if (value && typeof value === 'object') {
-    return Object.values(value).flatMap((item) => collectAssetRefs(item));
-  }
-  return [];
+function findContent(document: PackageTemplateDocument, unitId: string, contentId: string) {
+  return findUnit(document, unitId)?.contents.find((content) => content.id === contentId) ?? null;
 }
 
-function getResourceLinks(document: MaterialJsonV2Document, content: MaterialJsonV2Section) {
-  const refs = collectAssetRefs(content.content);
-  return refs
-    .map((assetId) => document.assets.find((asset) => asset.id === assetId) ?? null)
-    .filter((asset): asset is MaterialJsonV2Asset => asset !== null);
+function getResourceLinks(content: PackageTemplateContent) {
+  return content.resources;
 }
 
-function createPreview(content: MaterialJsonV2Section) {
-  const value = content.content;
+function createPreview(content: PackageTemplateContent) {
+  const value = content.data;
   if (!value || typeof value !== 'object') {
     return '暂无内容摘要';
   }
@@ -121,25 +111,335 @@ function createPreview(content: MaterialJsonV2Section) {
   return '查看详情了解此内容';
 }
 
-function renumberUnits(document: MaterialJsonV2Document) {
-  document.units.forEach((unit, index) => {
+function renumberUnits(document: PackageTemplateDocument) {
+  const course = getPrimaryCourse(document);
+  if (!course) {
+    return;
+  }
+  course.units.forEach((unit, index) => {
     unit.sort_order = index + 1;
   });
 }
 
-function renumberContents(unit: MaterialJsonV2Unit) {
-  unit.sections.forEach((section, index) => {
-    section.sort_order = index + 1;
+function renumberContents(unit: PackageTemplateUnit) {
+  unit.contents.forEach((content, index) => {
+    content.sort_order = index + 1;
   });
+}
+
+function getMaterialStatusLabel(status: string) {
+  switch (status) {
+    case 'published':
+      return '已发布';
+    case 'draft':
+      return '编辑中';
+    default:
+      return status;
+  }
+}
+
+function getMaterialStatusColor(status: string) {
+  switch (status) {
+    case 'published':
+      return 'green';
+    case 'draft':
+      return 'gold';
+    default:
+      return 'default';
+  }
+}
+
+function getContentTypeLabel(type: string) {
+  switch (type) {
+    case 'article':
+      return '课文';
+    case 'dialogue':
+      return '对话 / 音频';
+    case 'vocabulary':
+      return '词汇';
+    case 'grammar':
+      return '语法';
+    case 'exercise':
+      return '习题';
+    case 'homework':
+      return '作业';
+    case 'resource':
+      return '资料';
+    case 'expression':
+      return '表达';
+    case 'reading':
+      return '阅读';
+    case 'image':
+      return '图片';
+    default:
+      return type;
+  }
+}
+
+function getContentTypeColor(type: string) {
+  switch (type) {
+    case 'article':
+      return 'cyan';
+    case 'dialogue':
+      return 'blue';
+    case 'vocabulary':
+      return 'geekblue';
+    case 'grammar':
+      return 'purple';
+    case 'exercise':
+      return 'orange';
+    case 'homework':
+      return 'magenta';
+    case 'resource':
+      return 'gold';
+    case 'expression':
+      return 'lime';
+    case 'reading':
+      return 'green';
+    case 'image':
+      return 'volcano';
+    default:
+      return 'default';
+  }
+}
+
+function getResourceTypeLabel(type: string) {
+  switch (type) {
+    case 'audio':
+      return '音频';
+    case 'pdf':
+      return 'PDF';
+    case 'image':
+      return '图片';
+    case 'video':
+      return '视频';
+    case 'svg':
+      return '图卡';
+    default:
+      return type;
+  }
+}
+
+function getResourceTypeColor(type: string) {
+  switch (type) {
+    case 'audio':
+      return 'blue';
+    case 'pdf':
+      return 'red';
+    case 'image':
+      return 'purple';
+    case 'video':
+      return 'cyan';
+    case 'svg':
+      return 'volcano';
+    default:
+      return 'default';
+  }
+}
+
+function getStringValue(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+function getObjectArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((item) => item && typeof item === 'object') as Array<Record<string, unknown>> : [];
+}
+
+function renderContentDetail(content: PackageTemplateContent) {
+  const data = content.data;
+  const text = getStringValue(data.text);
+  const translation = getStringValue(data.translation);
+  const transcript = getStringValue(data.transcript);
+  const prompt = getStringValue(data.prompt);
+
+  if (content.type === 'article' || content.type === 'reading') {
+    return (
+      <div className="materials-detail-section">
+        {text ? <Typography.Paragraph className="materials-detail-paragraph">{text}</Typography.Paragraph> : null}
+        {translation ? (
+          <div className="materials-detail-block">
+            <Typography.Text type="secondary">参考释义</Typography.Text>
+            <Typography.Paragraph className="materials-detail-paragraph">{translation}</Typography.Paragraph>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (content.type === 'dialogue') {
+    return (
+      <div className="materials-detail-section">
+        {transcript ? (
+          <div className="materials-detail-block">
+            <Typography.Text type="secondary">对话内容</Typography.Text>
+            <Typography.Paragraph className="materials-detail-paragraph">{transcript}</Typography.Paragraph>
+          </div>
+        ) : null}
+        {translation ? (
+          <div className="materials-detail-block">
+            <Typography.Text type="secondary">参考释义</Typography.Text>
+            <Typography.Paragraph className="materials-detail-paragraph">{translation}</Typography.Paragraph>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (content.type === 'vocabulary') {
+    const items = getObjectArray(data.items);
+    return (
+      <div className="materials-detail-section">
+        {items.map((item, index) => (
+          <div key={`${content.id}-vocab-${index}`} className="materials-detail-block">
+            <Space wrap>
+              <Typography.Text strong>{getStringValue(item.word) ?? '未命名词汇'}</Typography.Text>
+              {getStringValue(item.reading) ? <Tag>{getStringValue(item.reading)}</Tag> : null}
+            </Space>
+            {getStringValue(item.meaning) ? (
+              <Typography.Paragraph className="materials-detail-paragraph">
+                释义：{getStringValue(item.meaning)}
+              </Typography.Paragraph>
+            ) : null}
+            {getStringValue(item.example) ? (
+              <Typography.Paragraph className="materials-detail-paragraph materials-detail-example">
+                例句：{getStringValue(item.example)}
+              </Typography.Paragraph>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (content.type === 'grammar') {
+    const points = getObjectArray(data.points);
+    return (
+      <div className="materials-detail-section">
+        {points.map((point, index) => (
+          <div key={`${content.id}-grammar-${index}`} className="materials-detail-block">
+            <Typography.Text strong>{getStringValue(point.pattern) ?? '未命名语法点'}</Typography.Text>
+            {getStringValue(point.meaning) ? (
+              <Typography.Paragraph className="materials-detail-paragraph">
+                用法：{getStringValue(point.meaning)}
+              </Typography.Paragraph>
+            ) : null}
+            {getStringValue(point.explanation) ? (
+              <Typography.Paragraph className="materials-detail-paragraph">
+                说明：{getStringValue(point.explanation)}
+              </Typography.Paragraph>
+            ) : null}
+            {Array.isArray(point.examples) && point.examples.length > 0 ? (
+              <div className="materials-detail-sublist">
+                <Typography.Text type="secondary">例句</Typography.Text>
+                {point.examples.map((example, exampleIndex) => (
+                  <Typography.Paragraph key={`${content.id}-grammar-example-${exampleIndex}`} className="materials-detail-paragraph materials-detail-example">
+                    {String(example)}
+                  </Typography.Paragraph>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (content.type === 'exercise') {
+    const questions = getObjectArray(data.questions);
+    return (
+      <div className="materials-detail-section">
+        {prompt ? (
+          <div className="materials-detail-block">
+            <Typography.Text type="secondary">练习说明</Typography.Text>
+            <Typography.Paragraph className="materials-detail-paragraph">{prompt}</Typography.Paragraph>
+          </div>
+        ) : null}
+        {questions.length > 0 ? (
+          <div className="materials-detail-sublist">
+            <Typography.Text type="secondary">题目列表</Typography.Text>
+            {questions.map((question, index) => (
+              <div key={`${content.id}-question-${index}`} className="materials-detail-block">
+                <Typography.Text strong>第 {index + 1} 题</Typography.Text>
+                {getStringValue(question.prompt) ? (
+                  <Typography.Paragraph className="materials-detail-paragraph">
+                    {getStringValue(question.prompt)}
+                  </Typography.Paragraph>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (content.type === 'homework') {
+    const tasks = getObjectArray(data.tasks);
+    return (
+      <div className="materials-detail-section">
+        {tasks.map((task, index) => (
+          <div key={`${content.id}-task-${index}`} className="materials-detail-block">
+            <Typography.Text strong>{getStringValue(task.title) ?? `作业 ${index + 1}`}</Typography.Text>
+            {getStringValue(task.description) ? (
+              <Typography.Paragraph className="materials-detail-paragraph">
+                {getStringValue(task.description)}
+              </Typography.Paragraph>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (content.type === 'expression') {
+    const expressions = getObjectArray(data.expressions);
+    return (
+      <div className="materials-detail-section">
+        {expressions.map((item, index) => (
+          <div key={`${content.id}-expression-${index}`} className="materials-detail-block">
+            <Typography.Paragraph className="materials-detail-paragraph">
+              {getStringValue(item.text) ?? `表达 ${index + 1}`}
+            </Typography.Paragraph>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (content.type === 'resource') {
+    const items = getObjectArray(data.items);
+    return (
+      <div className="materials-detail-section">
+        {items.map((item, index) => (
+          <div key={`${content.id}-resource-${index}`} className="materials-detail-block">
+            <Typography.Text strong>{getStringValue(item.title) ?? `资料 ${index + 1}`}</Typography.Text>
+            {getStringValue(item.description) ? (
+              <Typography.Paragraph className="materials-detail-paragraph">
+                {getStringValue(item.description)}
+              </Typography.Paragraph>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="materials-detail-block">
+      <Typography.Paragraph className="materials-detail-paragraph">
+        {createPreview(content)}
+      </Typography.Paragraph>
+    </div>
+  );
 }
 
 export function TeachingMaterialsPage() {
   const { user } = useAuth();
-  const { library, loading, error } = useMaterialData();
+  const { library, loading, error, reload } = useMaterialData();
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
-  const [document, setDocument] = useState<MaterialJsonV2Document | null>(null);
-  const [baselineDocument, setBaselineDocument] = useState<MaterialJsonV2Document | null>(null);
+  const [document, setDocument] = useState<PackageTemplateDocument | null>(null);
+  const [baselineDocument, setBaselineDocument] = useState<PackageTemplateDocument | null>(null);
   const [documentLoading, setDocumentLoading] = useState(false);
   const [documentError, setDocumentError] = useState<string | null>(null);
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
@@ -168,7 +468,7 @@ export function TeachingMaterialsPage() {
     setDocumentLoading(true);
     setDocumentError(null);
 
-    fetchMaterialJsonDocument(selectedMaterialId)
+    fetchPackageTemplate(selectedMaterialId)
       .then((nextDocument) => {
         if (!active) {
           return;
@@ -205,23 +505,24 @@ export function TeachingMaterialsPage() {
       : null;
   const selectedResource =
     document && selectedNode?.kind === 'resource'
-      ? document.assets.find((asset) => asset.id === selectedNode.assetId) ?? null
+      ? selectedContent?.resources.find((asset) => asset.id === selectedNode.assetId) ?? null
       : null;
 
-  const targetUnit = selectedNode?.kind === 'unit' || selectedNode?.kind === 'content' || selectedNode?.kind === 'resource'
-    ? selectedUnit
-    : null;
+  const targetUnit =
+    selectedNode?.kind === 'unit' || selectedNode?.kind === 'content' || selectedNode?.kind === 'resource'
+      ? selectedUnit
+      : null;
 
   const contentLibrary = useMemo<ContentLibraryItem[]>(() => {
     if (!document) {
       return [];
     }
 
-    return document.units.flatMap((unit) =>
-      unit.sections.map((content) => ({
+    return (getPrimaryCourse(document)?.units ?? []).flatMap((unit) =>
+      unit.contents.map((content) => ({
         content,
         sourceUnit: unit,
-        resources: getResourceLinks(document, content),
+        resources: getResourceLinks(content),
         preview: createPreview(content),
       })),
     );
@@ -306,61 +607,61 @@ export function TeachingMaterialsPage() {
       return [];
     }
 
-    const makeDropTitle = (label: string, node: EditorNode, accent?: string) => {
+    const makeDropTitle = (label: string, node: EditorNode, accentLabel?: string, accentColor?: string) => {
       const nodeClass = getNodeChangeClass(node);
       const nodeKey = toNodeKey(node);
       const isDropTarget = dragOverNodeKey === nodeKey;
 
       return (
-      <div
-        className={`materials-tree-node ${draggingLibraryItemId ? 'materials-tree-node-droppable' : ''} ${isDropTarget ? 'materials-tree-node-drop-target' : ''} ${nodeClass}`}
-        onDragEnter={(event) => {
-          if (isTeacher || !draggingLibraryItemId) {
-            return;
-          }
-          event.preventDefault();
-          event.stopPropagation();
-          setDragOverNodeKey(nodeKey);
-        }}
-        onDragOver={(event) => {
-          if (isTeacher || !draggingLibraryItemId) {
-            return;
-          }
-          event.preventDefault();
-          event.stopPropagation();
-          event.dataTransfer.dropEffect = 'copy';
-          if (dragOverNodeKey !== nodeKey) {
+        <div
+          className={`materials-tree-node ${draggingLibraryItemId ? 'materials-tree-node-droppable' : ''} ${isDropTarget ? 'materials-tree-node-drop-target' : ''} ${nodeClass}`}
+          onDragEnter={(event) => {
+            if (isTeacher || !draggingLibraryItemId) {
+              return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
             setDragOverNodeKey(nodeKey);
-          }
-        }}
-        onDragLeave={(event) => {
-          if (isTeacher || !draggingLibraryItemId) {
-            return;
-          }
-          event.stopPropagation();
-          if (dragOverNodeKey === nodeKey) {
+          }}
+          onDragOver={(event) => {
+            if (isTeacher || !draggingLibraryItemId) {
+              return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            event.dataTransfer.dropEffect = 'copy';
+            if (dragOverNodeKey !== nodeKey) {
+              setDragOverNodeKey(nodeKey);
+            }
+          }}
+          onDragLeave={(event) => {
+            if (isTeacher || !draggingLibraryItemId) {
+              return;
+            }
+            event.stopPropagation();
+            if (dragOverNodeKey === nodeKey) {
+              setDragOverNodeKey(null);
+            }
+          }}
+          onDrop={(event) => {
+            if (isTeacher || !draggingLibraryItemId) {
+              return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            const dragId = draggingLibraryItemId || event.dataTransfer.getData('text/plain');
+            const droppedItem = contentLibrary.find((item) => item.content.id === dragId);
+            if (!droppedItem) {
+              return;
+            }
+            assignContentToNode(droppedItem, node);
+            setDraggingLibraryItemId(null);
             setDragOverNodeKey(null);
-          }
-        }}
-        onDrop={(event) => {
-          if (isTeacher || !draggingLibraryItemId) {
-            return;
-          }
-          event.preventDefault();
-          event.stopPropagation();
-          const dragId = draggingLibraryItemId || event.dataTransfer.getData('text/plain');
-          const droppedItem = contentLibrary.find((item) => item.content.id === dragId);
-          if (!droppedItem) {
-            return;
-          }
-          assignContentToNode(droppedItem, node);
-          setDraggingLibraryItemId(null);
-          setDragOverNodeKey(null);
-        }}
-      >
-        <span>{label}</span>
-        {accent ? <Tag color={accent}>{accent}</Tag> : null}
-      </div>
+          }}
+        >
+          <span>{label}</span>
+          {accentLabel ? <Tag color={accentColor ?? 'default'}>{accentLabel}</Tag> : null}
+        </div>
       );
     };
 
@@ -368,35 +669,36 @@ export function TeachingMaterialsPage() {
       {
         key: toNodeKey({ kind: 'material', materialId: document.id }),
         title: makeDropTitle(document.title, { kind: 'material', materialId: document.id }),
-        children: document.units.map((unit) => ({
+        children: (getPrimaryCourse(document)?.units ?? []).map((unit) => ({
           key: toNodeKey({ kind: 'unit', materialId: document.id, unitId: unit.id }),
           title: makeDropTitle(unit.title, { kind: 'unit', materialId: document.id, unitId: unit.id }),
-          children: unit.sections.map((section) => ({
+          children: unit.contents.map((content) => ({
             key: toNodeKey({
               kind: 'content',
               materialId: document.id,
               unitId: unit.id,
-              contentId: section.id,
+              contentId: content.id,
             }),
             title: makeDropTitle(
-              `${section.type} · ${section.title}`,
+              `${getContentTypeLabel(content.type)} · ${content.title}`,
               {
                 kind: 'content',
                 materialId: document.id,
                 unitId: unit.id,
-                contentId: section.id,
+                contentId: content.id,
               },
-              section.type,
+              getContentTypeLabel(content.type),
+              getContentTypeColor(content.type),
             ),
-            children: getResourceLinks(document, section).map((asset) => ({
+            children: getResourceLinks(content).map((asset) => ({
               key: toNodeKey({
                 kind: 'resource',
                 materialId: document.id,
                 unitId: unit.id,
-                contentId: section.id,
+                contentId: content.id,
                 assetId: asset.id,
               }),
-              title: `${asset.asset_type} · ${asset.file_name}`,
+              title: `${getResourceTypeLabel(asset.resource_type)} · ${asset.file_name}`,
               isLeaf: true,
             })),
           })),
@@ -424,7 +726,7 @@ export function TeachingMaterialsPage() {
     contentLibrary.find((item) => item.content.id === selectedLibraryItemId) ??
     null;
 
-  function updateDocument(mutator: (draft: MaterialJsonV2Document) => void) {
+  function updateDocument(mutator: (draft: PackageTemplateDocument) => void) {
     setDocument((current) => {
       if (!current) {
         return current;
@@ -461,14 +763,18 @@ export function TeachingMaterialsPage() {
 
     if (dragNode.kind === 'unit' && dropNode.kind === 'unit' && dragNode.materialId === dropNode.materialId) {
       updateDocument((draft) => {
-        const dragIndex = draft.units.findIndex((unit) => unit.id === dragNode.unitId);
-        const dropIndex = draft.units.findIndex((unit) => unit.id === dropNode.unitId);
+        const course = getPrimaryCourse(draft);
+        if (!course) {
+          return;
+        }
+        const dragIndex = course.units.findIndex((unit) => unit.id === dragNode.unitId);
+        const dropIndex = course.units.findIndex((unit) => unit.id === dropNode.unitId);
         if (dragIndex < 0 || dropIndex < 0) {
           return;
         }
-        const [moved] = draft.units.splice(dragIndex, 1);
+        const [moved] = course.units.splice(dragIndex, 1);
         const targetIndex = info.dropPosition > dropIndex ? dropIndex + 1 : dropIndex;
-        draft.units.splice(targetIndex, 0, moved);
+        course.units.splice(targetIndex, 0, moved);
         renumberUnits(draft);
       });
       registerChange({
@@ -490,14 +796,14 @@ export function TeachingMaterialsPage() {
         if (!unit) {
           return;
         }
-        const dragIndex = unit.sections.findIndex((section) => section.id === dragNode.contentId);
-        const dropIndex = unit.sections.findIndex((section) => section.id === dropNode.contentId);
+        const dragIndex = unit.contents.findIndex((content) => content.id === dragNode.contentId);
+        const dropIndex = unit.contents.findIndex((content) => content.id === dropNode.contentId);
         if (dragIndex < 0 || dropIndex < 0) {
           return;
         }
-        const [moved] = unit.sections.splice(dragIndex, 1);
+        const [moved] = unit.contents.splice(dragIndex, 1);
         const targetIndex = info.dropPosition > dropIndex ? dropIndex + 1 : dropIndex;
-        unit.sections.splice(targetIndex, 0, moved);
+        unit.contents.splice(targetIndex, 0, moved);
         renumberContents(unit);
       });
       registerChange({
@@ -514,9 +820,14 @@ export function TeachingMaterialsPage() {
     }
 
     updateDocument((draft) => {
+      const course = getPrimaryCourse(draft);
+      if (!course) {
+        return;
+      }
+
       if (selectedNode.kind === 'unit') {
         const removedUnit = findUnit(draft, selectedNode.unitId);
-        draft.units = draft.units.filter((unit) => unit.id !== selectedNode.unitId);
+        course.units = course.units.filter((unit) => unit.id !== selectedNode.unitId);
         renumberUnits(draft);
         registerChange({
           id: `deleted:${selectedNode.unitId}`,
@@ -531,8 +842,8 @@ export function TeachingMaterialsPage() {
         if (!unit) {
           return;
         }
-        const removedContent = unit.sections.find((section) => section.id === selectedNode.contentId);
-        unit.sections = unit.sections.filter((section) => section.id !== selectedNode.contentId);
+        const removedContent = unit.contents.find((content) => content.id === selectedNode.contentId);
+        unit.contents = unit.contents.filter((content) => content.id !== selectedNode.contentId);
         renumberContents(unit);
         registerChange({
           id: `deleted:${selectedNode.contentId}`,
@@ -547,7 +858,7 @@ export function TeachingMaterialsPage() {
         if (!content) {
           return;
         }
-        content.content = removeAssetRef(content.content, selectedNode.assetId);
+        content.resources = content.resources.filter((resource) => resource.id !== selectedNode.assetId);
         registerChange({
           id: toNodeKey({
             kind: 'content',
@@ -591,18 +902,12 @@ export function TeachingMaterialsPage() {
 
       const copiedContent = structuredClone(item.content);
       copiedContent.id = copiedContentId;
-      copiedContent.sort_order = unit.sections.length + 1;
+      copiedContent.sort_order = unit.contents.length + 1;
       copiedContent.title =
         unit.id === item.sourceUnit.id ? `${item.content.title}（复制）` : item.content.title;
 
-      unit.sections.push(copiedContent);
+      unit.contents.push(copiedContent);
       renumberContents(unit);
-
-      for (const asset of item.resources) {
-        if (!draft.assets.find((current) => current.id === asset.id)) {
-          draft.assets.push(structuredClone(asset));
-        }
-      }
     });
 
     registerChange({
@@ -635,10 +940,17 @@ export function TeachingMaterialsPage() {
     if (!document || pendingChanges.length === 0) {
       return;
     }
-
-    setBaselineDocument(cloneDocument(document));
-    setPendingChanges([]);
-    messageApi.success('已确认当前改动。后端持久化下一步接入。');
+    savePackageTemplate(document.id, document)
+      .then((result) => {
+        setDocument(result.template);
+        setBaselineDocument(cloneDocument(result.template));
+        setPendingChanges([]);
+        reload();
+        messageApi.success(`内容改动已提交，并生成版本 ${result.created_release.version_number}。`);
+      })
+      .catch((nextError) => {
+        messageApi.error(nextError instanceof Error ? nextError.message : '保存失败');
+      });
   }
 
   function resetChanges() {
@@ -651,6 +963,40 @@ export function TeachingMaterialsPage() {
     messageApi.info('已重置到上次确认状态。');
   }
 
+  function resetToInitialVersion() {
+    if (!document) {
+      return;
+    }
+
+    fetchMaterialReleaseVersions(document.id)
+      .then((releases) => {
+        if (releases.length === 0) {
+          messageApi.info('当前内容包还没有历史版本，无法重置到初始版本。');
+          return null;
+        }
+        return fetchMaterialReleaseVersionDetail(document.id, releases[releases.length - 1].id);
+      })
+      .then((detail) => {
+        if (!detail) {
+          return;
+        }
+        const initialTemplate = structuredClone(detail.snapshot_json) as PackageTemplateDocument;
+        setDocument(initialTemplate);
+        setSelectedNodeKey(toNodeKey({ kind: 'material', materialId: initialTemplate.id }));
+        setPendingChanges([
+          {
+            id: `reset-initial:${initialTemplate.id}`,
+            label: `已重置为初始版本：${detail.version_number}`,
+            kind: 'updated',
+          },
+        ]);
+        messageApi.success(`已把当前编辑内容重置为初始版本 ${detail.version_number}，提交后会生成新版本。`);
+      })
+      .catch((nextError) => {
+        messageApi.error(nextError instanceof Error ? nextError.message : '重置初始版本失败');
+      });
+  }
+
   function assignContentToTarget(item: ContentLibraryItem) {
     if (!document || !targetUnit) {
       return;
@@ -659,7 +1005,7 @@ export function TeachingMaterialsPage() {
       kind: 'unit',
       materialId: document.id,
       unitId: targetUnit.id,
-    } as EditorNode);
+    });
   }
 
   const summaryText = (() => {
@@ -673,51 +1019,29 @@ export function TeachingMaterialsPage() {
       return `当前目标单元：${selectedUnit.title}`;
     }
     if (document) {
-      return `当前教材：${document.title}`;
+      return `当前内容包：${document.title}`;
     }
-    return '选择教材后查看目录';
+    return '选择内容包后查看目录';
   })();
 
   return (
     <ModuleFrame
-      eyebrow="Materials"
+      eyebrow="教学内容"
       title={isTeacher ? '教学内容' : '教材内容'}
       compact
-      summary="页面收成三块：左边切教材，中间整理目录，右边从内容素材库里筛选并加入当前单元。目录支持拖拽，内容和资源都尽量按业务语义展示。"
+      summary="页面收成一个统一编辑台：顶部固定检索，中间三栏编辑，底部固定提交动作。目录继续支持拖拽，内容和资源按业务语义展示。"
       metrics={[
-        { label: '教材总数', value: String(library.length) },
-        { label: '当前单元', value: String(document?.units.length ?? 0) },
+        { label: '内容包总数', value: String(library.length) },
+        { label: '当前单元', value: String(getPrimaryCourse(document)?.units.length ?? 0) },
         { label: '内容块', value: String(contentLibrary.length) },
       ]}
     >
       {contextHolder}
-      <PageToolbar
-        title="教材目录与内容素材库"
-        description="不再让用户碰 JSON。左边只做教材切换，中间只做目录结构，右边按内容块来筛选和分配，资源作为内容附属信息展示。"
-        actions={
-          <Space wrap>
-            <Button onClick={resetChanges} disabled={!baselineDocument || pendingChanges.length === 0 || isTeacher}>
-              重置改动{pendingChanges.length > 0 ? ` (${pendingChanges.length})` : ''}
-            </Button>
-            <Button type="primary" onClick={submitChanges} disabled={pendingChanges.length === 0 || isTeacher}>
-              提交改动{pendingChanges.length > 0 ? ` (${pendingChanges.length})` : ''}
-            </Button>
-            <Button danger onClick={removeCurrent} disabled={!selectedNode || selectedNode.kind === 'material' || isTeacher}>
-              删除当前节点
-            </Button>
-            {document ? (
-              <Button href={getMaterialJsonExportUrl(document.id)} target="_blank">
-                导出 JSON
-              </Button>
-            ) : null}
-          </Space>
-        }
-      />
 
-      {loading ? <Alert type="info" message="正在读取教材列表..." showIcon className="login-alert" /> : null}
-      {error ? <Alert type="error" message={`教材列表加载失败：${error}`} showIcon className="login-alert" /> : null}
-      {documentLoading ? <Alert type="info" message="正在读取教材目录..." showIcon className="login-alert" /> : null}
-      {documentError ? <Alert type="error" message={`教材目录加载失败：${documentError}`} showIcon className="login-alert" /> : null}
+      {loading ? <Alert type="info" message="正在读取内容包列表..." showIcon className="login-alert" /> : null}
+      {error ? <Alert type="error" message={`内容包列表加载失败：${error}`} showIcon className="login-alert" /> : null}
+      {documentLoading ? <Alert type="info" message="正在读取课程目录..." showIcon className="login-alert" /> : null}
+      {documentError ? <Alert type="error" message={`课程目录加载失败：${documentError}`} showIcon className="login-alert" /> : null}
       {pendingChanges.length > 0 ? (
         <Alert
           type="warning"
@@ -728,55 +1052,9 @@ export function TeachingMaterialsPage() {
         />
       ) : null}
 
-      <div className="materials-editor-layout">
-        <Card title="教材列表" className="module-card materials-pane">
-          <List
-            dataSource={library}
-            renderItem={(item) => (
-              <List.Item
-                className={[
-                  'material-list-item',
-                  item.id === selectedMaterialId ? 'material-list-item-active' : '',
-                  item.id === selectedMaterialId && materialHasChanges
-                    ? `material-list-item-changed change-tone-updated`
-                    : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => setSelectedMaterialId(item.id)}
-              >
-                <Space direction="vertical" size={4} className="full-width">
-                  <Space wrap>
-                    <Typography.Text strong>{item.title}</Typography.Text>
-                    <Tag color={item.status === 'published' ? 'green' : 'orange'}>{item.status}</Tag>
-                  </Space>
-                  <Typography.Text type="secondary">
-                    {item.series} / {item.level} / {item.unit_count} 单元 / {item.resource_count} 资源
-                  </Typography.Text>
-                </Space>
-              </List.Item>
-            )}
-          />
-        </Card>
-
-        <Card title="教材目录" extra={<Typography.Text type="secondary">{summaryText}</Typography.Text>} className="module-card materials-pane">
-          {document ? (
-            <Tree
-              draggable={!isTeacher && !draggingLibraryItemId}
-              blockNode
-              defaultExpandAll
-              treeData={treeData}
-              selectedKeys={selectedNodeKey ? [selectedNodeKey] : []}
-              onSelect={(keys) => setSelectedNodeKey(String(keys[0] ?? ''))}
-              onDrop={handleTreeDrop}
-            />
-          ) : (
-            <Empty description="选择教材后查看目录" />
-          )}
-        </Card>
-
-        <Card title="内容素材库" className="module-card materials-pane materials-editor-panel">
-          <div className="materials-library-toolbar">
+      <Card title="课程目录编辑台" extra={<Typography.Text type="secondary">{summaryText}</Typography.Text>} className="module-card materials-workbench-card">
+        <div className="materials-workbench">
+          <div className="materials-workbench-toolbar">
             <Space wrap className="full-width">
               <Input
                 value={libraryKeyword}
@@ -805,139 +1083,245 @@ export function TeachingMaterialsPage() {
                 className="toolbar-select"
                 options={[
                   { value: 'all', label: '全部单元' },
-                  ...(document?.units.map((unit) => ({ value: unit.id, label: unit.title })) ?? []),
+                  ...(getPrimaryCourse(document)?.units.map((unit) => ({ value: unit.id, label: unit.title })) ?? []),
                 ]}
               />
             </Space>
 
-            <Typography.Text type="secondary" className="materials-library-helper">
-              先在中间选中一个目标单元，再从这里把内容块直接加入目录。资源信息会跟着内容一起带过去。
-            </Typography.Text>
+            <div className="materials-workbench-toolbar-row">
+              <Typography.Text type="secondary" className="materials-library-helper">
+                先在中间选中目标单元，再从右侧把内容块拖进去。关联资源会随内容一起带入目录。
+              </Typography.Text>
+              <Typography.Text type="secondary">当前模式：左侧切内容包，中间调目录，右侧查看内容详情与关联资源。</Typography.Text>
+            </div>
           </div>
 
-          <div className="materials-library-stack">
-            <div className="materials-library-scroll">
-              <List
-                className="materials-library-list"
-                dataSource={filteredLibrary}
-                renderItem={(item) => (
-                  <List.Item
-                    draggable={!isTeacher}
-                    className={[
-                      'material-list-item',
-                      item.content.id === selectedLibraryItemId ? 'material-list-item-active' : '',
-                      (() => {
-                        const contentNode = {
-                          kind: 'content' as const,
-                          materialId: document?.id ?? 'material',
-                          unitId: item.sourceUnit.id,
-                          contentId: item.content.id,
-                        };
-                        const tone = getNodeChangeTone(contentNode);
-                        return changeMap[toNodeKey(contentNode)]
-                          ? `material-list-item-changed ${tone}`.trim()
-                          : '';
-                      })(),
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                    onDragStart={(event) => {
-                      setDraggingLibraryItemId(item.content.id);
-                      event.dataTransfer.effectAllowed = 'copy';
-                      event.dataTransfer.setData('text/plain', item.content.id);
-                    }}
-                    onDragEnd={() => {
-                      setDraggingLibraryItemId(null);
-                      setDragOverNodeKey(null);
-                    }}
-                    onClick={() => setSelectedLibraryItemId(item.content.id)}
-                    actions={[
-                      <Button
-                        key="assign"
-                        type="link"
-                        disabled={!targetUnit || isTeacher}
-                        onClick={() => assignContentToTarget(item)}
-                      >
-                        加入当前单元
-                      </Button>,
-                    ]}
-                  >
-                    <Space direction="vertical" size={4} className="full-width">
-                      <Space wrap>
-                        <Typography.Text strong>{item.content.title}</Typography.Text>
-                        <Tag color="blue">{item.content.type}</Tag>
-                        <Tag>{item.sourceUnit.title}</Tag>
+          <div className="materials-editor-header-row">
+            <div className="materials-pane-header materials-pane-header-standalone">
+              <Typography.Text strong>内容包列表</Typography.Text>
+              <Typography.Text type="secondary">{library.length} 个内容包</Typography.Text>
+            </div>
+            <div className="materials-pane-header materials-pane-header-standalone">
+              <Typography.Text strong>课程目录</Typography.Text>
+              <Typography.Text type="secondary">{summaryText}</Typography.Text>
+            </div>
+            <div className="materials-pane-header materials-pane-header-standalone">
+              <Typography.Text strong>内容素材库</Typography.Text>
+              <Typography.Text type="secondary">{filteredLibrary.length} 条内容</Typography.Text>
+            </div>
+            <div className="materials-pane-header materials-pane-header-standalone">
+              <Typography.Text strong>内容详情</Typography.Text>
+              <Typography.Text type="secondary">
+                {selectedLibraryItem ? selectedLibraryItem.content.title : '请选择一个内容块'}
+              </Typography.Text>
+            </div>
+          </div>
+
+          <div className="materials-editor-content-row">
+            <div className="materials-pane materials-pane-embedded">
+              <div className="materials-pane-scroll">
+                <List
+                  dataSource={library}
+                  renderItem={(item) => (
+                    <List.Item
+                      className={[
+                        'material-list-item',
+                        item.id === selectedMaterialId ? 'material-list-item-active' : '',
+                        item.id === selectedMaterialId && materialHasChanges
+                          ? 'material-list-item-changed change-tone-updated'
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      onClick={() => setSelectedMaterialId(item.id)}
+                    >
+                      <Space direction="vertical" size={4} className="full-width">
+                        <Space wrap>
+                          <Typography.Text strong>{item.title}</Typography.Text>
+                          <Tag color={getMaterialStatusColor(item.status)}>
+                            {getMaterialStatusLabel(item.status)}
+                          </Tag>
+                        </Space>
+                        <Typography.Text type="secondary">
+                          {item.series} / {item.level} / {item.unit_count} 单元 / {item.resource_count} 资源
+                        </Typography.Text>
                       </Space>
-                      <Typography.Text type="secondary">{item.preview}</Typography.Text>
-                      <Typography.Text type="secondary">关联资源 {item.resources.length}</Typography.Text>
-                    </Space>
-                  </List.Item>
-                )}
-              />
+                    </List.Item>
+                  )}
+                />
+              </div>
             </div>
 
-            <Card title="内容详情" className="module-card materials-detail-card">
-              <div className="materials-detail-scroll">
-                {!selectedLibraryItem ? <Empty description="从左侧选择一个内容块" /> : null}
-
-                {selectedLibraryItem ? (
-                  <Space direction="vertical" size={12} className="full-width">
-                    <Space wrap>
-                      <Typography.Text strong>{selectedLibraryItem.content.title}</Typography.Text>
-                      <Tag color="blue">{selectedLibraryItem.content.type}</Tag>
-                      <Tag>{selectedLibraryItem.sourceUnit.title}</Tag>
-                    </Space>
-                    <Typography.Paragraph className="card-description">
-                      {selectedLibraryItem.preview}
-                    </Typography.Paragraph>
-                    <Typography.Text type="secondary">内容结构：</Typography.Text>
-                    <pre className="materials-content-preview">
-                      {JSON.stringify(selectedLibraryItem.content.content, null, 2)}
-                    </pre>
-                    <Typography.Text type="secondary">关联资源：</Typography.Text>
-                    <List
-                      size="small"
-                      dataSource={selectedLibraryItem.resources}
-                      renderItem={(asset) => (
-                        <List.Item
-                          actions={[
-                            <Button key="preview" type="link" href={`${MEDIA_BASE_URL}${asset.file_url}`} target="_blank">
-                              查看
-                            </Button>,
-                          ]}
-                        >
-                          <Space wrap>
-                            <Typography.Text>{asset.file_name}</Typography.Text>
-                            <Tag>{asset.asset_type}</Tag>
-                          </Space>
-                        </List.Item>
-                      )}
-                    />
-                  </Space>
-                ) : null}
-
-                {pendingChanges.length > 0 ? (
-                  <>
-                    <Typography.Text type="secondary">待提交改动：</Typography.Text>
-                    <List
-                      size="small"
-                      dataSource={pendingChanges}
-                      renderItem={(change) => (
-                        <List.Item>
-                          <Space wrap>
-                            <Tag color={getChangeColor(change.kind)}>{getChangeLabel(change.kind)}</Tag>
-                            <Typography.Text>{change.label}</Typography.Text>
-                          </Space>
-                        </List.Item>
-                      )}
-                    />
-                  </>
-                ) : null}
+            <div className="materials-pane materials-pane-embedded">
+              <div className="materials-pane-scroll">
+                {document ? (
+                  <Tree
+                    draggable={!isTeacher && !draggingLibraryItemId}
+                    blockNode
+                    defaultExpandAll
+                    treeData={treeData}
+                    selectedKeys={selectedNodeKey ? [selectedNodeKey] : []}
+                    onSelect={(keys) => setSelectedNodeKey(String(keys[0] ?? ''))}
+                    onDrop={handleTreeDrop}
+                  />
+                ) : (
+                  <Empty description="选择内容包后查看目录" />
+                )}
               </div>
-            </Card>
+            </div>
+
+            <div className="materials-pane materials-pane-embedded materials-editor-panel">
+              <div className="materials-library-scroll">
+                <List
+                  className="materials-library-list"
+                  dataSource={filteredLibrary}
+                  renderItem={(item) => (
+                    <List.Item
+                      draggable={!isTeacher}
+                      className={[
+                        'material-list-item',
+                        item.content.id === selectedLibraryItemId ? 'material-list-item-active' : '',
+                        (() => {
+                          const contentNode = {
+                            kind: 'content' as const,
+                            materialId: document?.id ?? 'material',
+                            unitId: item.sourceUnit.id,
+                            contentId: item.content.id,
+                          };
+                          const tone = getNodeChangeTone(contentNode);
+                          return changeMap[toNodeKey(contentNode)]
+                            ? `material-list-item-changed ${tone}`.trim()
+                            : '';
+                        })(),
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      onDragStart={(event) => {
+                        setDraggingLibraryItemId(item.content.id);
+                        event.dataTransfer.effectAllowed = 'copy';
+                        event.dataTransfer.setData('text/plain', item.content.id);
+                      }}
+                      onDragEnd={() => {
+                        setDraggingLibraryItemId(null);
+                        setDragOverNodeKey(null);
+                      }}
+                      onClick={() => setSelectedLibraryItemId(item.content.id)}
+                      actions={[
+                        <Button
+                          key="assign"
+                          type="link"
+                          disabled={!targetUnit || isTeacher}
+                          onClick={() => assignContentToTarget(item)}
+                        >
+                          加入当前单元
+                        </Button>,
+                      ]}
+                    >
+                      <Space direction="vertical" size={4} className="full-width">
+                        <Space wrap>
+                          <Typography.Text strong>{item.content.title}</Typography.Text>
+                          <Tag color={getContentTypeColor(item.content.type)}>
+                            {getContentTypeLabel(item.content.type)}
+                          </Tag>
+                          <Tag>{item.sourceUnit.title}</Tag>
+                        </Space>
+                        <Typography.Text type="secondary">{item.preview}</Typography.Text>
+                        <Typography.Text type="secondary">关联资源 {item.resources.length}</Typography.Text>
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="materials-pane materials-pane-embedded">
+              <Card className="module-card materials-detail-card">
+                <div className="materials-detail-scroll">
+                  {!selectedLibraryItem ? <Empty description="从左侧选择一个内容块" /> : null}
+
+                  {selectedLibraryItem ? (
+                    <Space direction="vertical" size={12} className="full-width">
+                      <Space wrap>
+                        <Typography.Text strong>{selectedLibraryItem.content.title}</Typography.Text>
+                        <Tag color={getContentTypeColor(selectedLibraryItem.content.type)}>
+                          {getContentTypeLabel(selectedLibraryItem.content.type)}
+                        </Tag>
+                        <Tag>{selectedLibraryItem.sourceUnit.title}</Tag>
+                      </Space>
+                      <Typography.Paragraph className="card-description">
+                        {selectedLibraryItem.preview}
+                      </Typography.Paragraph>
+                      <Typography.Text type="secondary">内容详情：</Typography.Text>
+                      {renderContentDetail(selectedLibraryItem.content)}
+                      <Typography.Text type="secondary">关联资源：</Typography.Text>
+                      <List
+                        size="small"
+                        dataSource={selectedLibraryItem.resources}
+                        renderItem={(asset) => (
+                          <List.Item
+                            actions={[
+                              <Button key="preview" type="link" href={`${MEDIA_BASE_URL}${asset.file_url}`} target="_blank">
+                                查看
+                              </Button>,
+                            ]}
+                          >
+                            <Space wrap>
+                              <Typography.Text>{asset.file_name}</Typography.Text>
+                              <Tag color={getResourceTypeColor(asset.resource_type)}>
+                                {getResourceTypeLabel(asset.resource_type)}
+                              </Tag>
+                            </Space>
+                          </List.Item>
+                        )}
+                      />
+                    </Space>
+                  ) : null}
+
+                  {pendingChanges.length > 0 ? (
+                    <>
+                      <Typography.Text type="secondary">待提交改动：</Typography.Text>
+                      <List
+                        size="small"
+                        dataSource={pendingChanges}
+                        renderItem={(change) => (
+                          <List.Item>
+                            <Space wrap>
+                              <Tag color={getChangeColor(change.kind)}>{getChangeLabel(change.kind)}</Tag>
+                              <Typography.Text>{change.label}</Typography.Text>
+                            </Space>
+                          </List.Item>
+                        )}
+                      />
+                    </>
+                  ) : null}
+                </div>
+              </Card>
+            </div>
           </div>
-        </Card>
-      </div>
+
+          <div className="materials-workbench-footer">
+            <Space wrap>
+              <Button onClick={resetChanges} disabled={!baselineDocument || pendingChanges.length === 0 || isTeacher}>
+                重置改动{pendingChanges.length > 0 ? ` (${pendingChanges.length})` : ''}
+              </Button>
+              <Button onClick={resetToInitialVersion} disabled={!document || isTeacher}>
+                重置为初始版本
+              </Button>
+              <Button type="primary" onClick={submitChanges} disabled={pendingChanges.length === 0 || isTeacher}>
+                提交改动{pendingChanges.length > 0 ? ` (${pendingChanges.length})` : ''}
+              </Button>
+              <Button danger onClick={removeCurrent} disabled={!selectedNode || selectedNode.kind === 'material' || isTeacher}>
+                删除当前节点
+              </Button>
+              {document ? (
+                <Button href={getPackageTemplateExportUrl(document.id)} target="_blank">
+                  导出 JSON
+                </Button>
+              ) : null}
+            </Space>
+          </div>
+        </div>
+      </Card>
     </ModuleFrame>
   );
 }
@@ -970,37 +1354,4 @@ function getChangeColor(kind: PendingChange['kind']) {
     case 'assigned':
       return 'blue';
   }
-}
-
-function removeAssetRef(value: unknown, targetAssetId: string): Record<string, unknown> {
-  if (Array.isArray(value)) {
-    return { items: value.filter((item) => item !== targetAssetId) };
-  }
-
-  if (!value || typeof value !== 'object') {
-    return {};
-  }
-
-  const nextValue: Record<string, unknown> = {};
-  for (const [key, current] of Object.entries(value)) {
-    if (current === targetAssetId) {
-      continue;
-    }
-
-    if (Array.isArray(current)) {
-      nextValue[key] = current.filter((item) => {
-        if (item === targetAssetId) {
-          return false;
-        }
-        if (item && typeof item === 'object' && 'asset_ref' in item) {
-          return (item as { asset_ref?: string }).asset_ref !== targetAssetId;
-        }
-        return true;
-      });
-      continue;
-    }
-
-    nextValue[key] = current;
-  }
-  return nextValue;
 }

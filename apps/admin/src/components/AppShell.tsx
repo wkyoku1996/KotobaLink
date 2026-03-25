@@ -75,6 +75,7 @@ const navGroups: NavGroup[] = [
       { key: '/courses', icon: <ReadOutlined />, label: '课程中心', roles: ['super_admin', 'ops_admin', 'teacher'] },
       { key: '/classes', icon: <AppstoreOutlined />, label: '班级管理', roles: ['super_admin', 'ops_admin', 'teacher'] },
       { key: '/materials', icon: <FileTextOutlined />, label: '教材内容', roles: ['super_admin', 'ops_admin', 'teacher'] },
+      { key: '/materials/publish', icon: <NotificationOutlined />, label: '发布管理', roles: ['super_admin', 'ops_admin'] },
       { key: '/assignments', icon: <FormOutlined />, label: '作业反馈', roles: ['teacher'] },
       { key: '/leave-adjustments', icon: <EditOutlined />, label: '请假调课', roles: ['teacher'] },
       { key: '/lesson-records', icon: <FileTextOutlined />, label: '课堂记录', roles: ['teacher'] },
@@ -250,7 +251,12 @@ export function AppShell() {
     shellConfig.routeTitleOverrides?.[location.pathname] ??
     routeTitles[location.pathname] ??
     { title: 'KotobaLink Admin', section: 'Overview' };
-  const selectedMenuKey = location.pathname.startsWith('/materials/') ? '/materials' : location.pathname;
+  const selectedMenuKey =
+    location.pathname === '/materials/publish'
+      ? '/materials/publish'
+      : location.pathname.startsWith('/materials/')
+        ? '/materials'
+        : location.pathname;
 
   const menuItems: MenuProps['items'] = navGroups
     .map((group) => {

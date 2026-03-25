@@ -1,4 +1,5 @@
-const { getCatalogCourseDetail, getCourseById, getScheduleLessonById, getDemoData, setDemoState } = require('../../../services/demo-service')
+const { getScheduleLessonById, getDemoData, setDemoState } = require('../../../services/demo-service')
+const { getPublishedCourseBundle } = require('../../../services/course-service')
 const { withAccessibility } = require('../../../behaviors/with-accessibility')
 
 Page(withAccessibility({
@@ -21,15 +22,22 @@ Page(withAccessibility({
     }
   },
 
-  refresh(options) {
-    const course = getCourseById(options.id)
-    const detail = getCatalogCourseDetail(options.id)
+  async refresh(options) {
+    const bundle = await getPublishedCourseBundle(options.id)
+    const course = bundle ? bundle.course : null
+    const detail = bundle ? bundle.detail : null
     const detailMode = options.source === 'schedule' ? 'schedule' : 'catalog'
     const lesson = detailMode === 'schedule'
       ? getScheduleLessonById(options.lessonId)
       : null
     const demo = getDemoData()
-    const isPurchased = demo.learningArchive.enrolledCourses.some((item) => String(item.id) === String(course.id))
+    const isPurchased = course
+      ? demo.learningArchive.enrolledCourses.some((item) => String(item.id) === String(course.id))
+      : false
+
+    if (!course || !detail) {
+      return
+    }
 
     this.setData({
       detail,
@@ -68,7 +76,7 @@ Page(withAccessibility({
   openLessonDetail(event) {
     const { lessonId } = event.currentTarget.dataset
     wx.navigateTo({
-      url: `/pages/learning/lesson-detail/index?courseId=${this.data.course.id}&lessonId=${lessonId}`,
+      url: `/pages/learning/lesson-detail/index?courseId=${this.data.course.id}&lessonId=${lessonId}&enrolled=${this.data.isPurchased ? 1 : 0}`,
     })
   },
 }))

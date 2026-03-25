@@ -9,17 +9,36 @@ from app.modules.materials.schemas import (
     MaterialJsonV2ExportResponse,
     MaterialLibraryResponse,
     MaterialPublishResponse,
+    MaterialReleaseCreateInput,
+    MaterialReleaseDeleteResponse,
+    MaterialReleaseDetailResponse,
+    MaterialReleaseListResponse,
     MaterialUnitDetailResponse,
     MaterialUnitsResponse,
+    PackageTemplateDeleteResponse,
+    PackageTemplateDocument,
+    PackageTemplateResponse,
+    PackageTemplateSaveResponse,
 )
 from app.modules.materials.service import (
+    create_package_template,
+    create_material_release_version,
+    delete_package_template,
     export_material_json_v2,
+    export_package_template,
+    archive_material_release_version,
+    delete_material_release_version,
+    get_material_release_version,
     get_material_detail,
     get_material_unit_detail,
+    go_live_material_release_version,
+    restore_material_release_version_as_new_draft,
     list_material_assets,
     list_material_publish_records,
+    list_material_release_versions,
     list_material_units,
     list_materials,
+    save_package_template,
     upload_material_asset,
 )
 
@@ -43,6 +62,105 @@ def export_material_json_document(
     session: Session = Depends(get_db_session),
 ) -> MaterialJsonV2ExportResponse:
     return MaterialJsonV2ExportResponse(data=export_material_json_v2(session, material_id))
+
+
+@router.get("/library/{material_id}/template", response_model=PackageTemplateResponse)
+def read_package_template(
+    material_id: str,
+    session: Session = Depends(get_db_session),
+) -> PackageTemplateResponse:
+    return PackageTemplateResponse(data=export_package_template(session, material_id))
+
+
+@router.post("/library/template", response_model=PackageTemplateResponse)
+def create_package_template_document(
+    template: PackageTemplateDocument,
+    session: Session = Depends(get_db_session),
+) -> PackageTemplateResponse:
+    return PackageTemplateResponse(data=create_package_template(session, template))
+
+
+@router.put("/library/{material_id}/template", response_model=PackageTemplateSaveResponse)
+def update_package_template(
+    material_id: str,
+    template: PackageTemplateDocument,
+    session: Session = Depends(get_db_session),
+) -> PackageTemplateSaveResponse:
+    return PackageTemplateSaveResponse(data=save_package_template(session, material_id, template))
+
+
+@router.delete("/library/{material_id}/template", response_model=PackageTemplateDeleteResponse)
+def remove_package_template(
+    material_id: str,
+    session: Session = Depends(get_db_session),
+) -> PackageTemplateDeleteResponse:
+    return PackageTemplateDeleteResponse(data=delete_package_template(session, material_id))
+
+
+@router.post("/library/{material_id}/releases", response_model=MaterialReleaseDetailResponse)
+def create_material_release(
+    material_id: str,
+    payload: MaterialReleaseCreateInput,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseDetailResponse:
+    return MaterialReleaseDetailResponse(
+        data=create_material_release_version(session, material_id, payload)
+    )
+
+
+@router.get("/library/{material_id}/releases", response_model=MaterialReleaseListResponse)
+def read_material_releases(
+    material_id: str,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseListResponse:
+    return MaterialReleaseListResponse(data=list_material_release_versions(session, material_id))
+
+
+@router.get("/library/{material_id}/releases/{release_id}", response_model=MaterialReleaseDetailResponse)
+def read_material_release_detail(
+    material_id: str,
+    release_id: str,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseDetailResponse:
+    return MaterialReleaseDetailResponse(data=get_material_release_version(session, material_id, release_id))
+
+
+@router.post("/library/{material_id}/releases/{release_id}/go-live", response_model=MaterialReleaseDetailResponse)
+def make_material_release_live(
+    material_id: str,
+    release_id: str,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseDetailResponse:
+    return MaterialReleaseDetailResponse(data=go_live_material_release_version(session, material_id, release_id))
+
+
+@router.post("/library/{material_id}/releases/{release_id}/archive", response_model=MaterialReleaseDetailResponse)
+def archive_material_release(
+    material_id: str,
+    release_id: str,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseDetailResponse:
+    return MaterialReleaseDetailResponse(data=archive_material_release_version(session, material_id, release_id))
+
+
+@router.delete("/library/{material_id}/releases/{release_id}", response_model=MaterialReleaseDeleteResponse)
+def delete_material_release(
+    material_id: str,
+    release_id: str,
+    session: Session = Depends(get_db_session),
+) -> MaterialReleaseDeleteResponse:
+    return MaterialReleaseDeleteResponse(data=delete_material_release_version(session, material_id, release_id))
+
+
+@router.post("/library/{material_id}/releases/{release_id}/restore", response_model=PackageTemplateSaveResponse)
+def restore_material_release(
+    material_id: str,
+    release_id: str,
+    session: Session = Depends(get_db_session),
+) -> PackageTemplateSaveResponse:
+    return PackageTemplateSaveResponse(
+        data=restore_material_release_version_as_new_draft(session, material_id, release_id)
+    )
 
 
 @router.get("/units", response_model=MaterialUnitsResponse)

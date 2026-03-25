@@ -9,7 +9,7 @@ type ApiEnvelope<T> = {
 };
 
 type RequestOptions = {
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
   token?: string | null;
 };
@@ -282,6 +282,96 @@ export type MaterialJsonV2Document = {
   publish: MaterialJsonV2Publish;
 };
 
+export type PackageTemplateResourceMeta = {
+  file_size: number | null;
+  duration_seconds: number | null;
+};
+
+export type PackageTemplateResource = {
+  id: string;
+  file_name: string;
+  resource_type: string;
+  mime_type: string;
+  storage_key: string;
+  file_url: string;
+  visibility: string;
+  meta: PackageTemplateResourceMeta;
+};
+
+export type PackageTemplateContent = {
+  id: string;
+  type: string;
+  title: string;
+  sort_order: number;
+  enabled: boolean;
+  data: Record<string, unknown>;
+  resources: PackageTemplateResource[];
+};
+
+export type PackageTemplateUnit = {
+  id: string;
+  title: string;
+  code: string | null;
+  sort_order: number;
+  status: string;
+  learning_goal: string | null;
+  contents: PackageTemplateContent[];
+};
+
+export type PackageTemplateCourse = {
+  id: string;
+  title: string;
+  status: string;
+  summary: string | null;
+  units: PackageTemplateUnit[];
+};
+
+export type PackageTemplateDocument = {
+  schema_version: string;
+  id: string;
+  title: string;
+  series: string;
+  level: string;
+  language: string;
+  version: string;
+  summary: string | null;
+  status: string;
+  visibility: string;
+  tags: string[];
+  courses: PackageTemplateCourse[];
+};
+
+export type PackageTemplateDeleteResult = {
+  id: string;
+  deleted: boolean;
+};
+
+export type PackageTemplateSaveResult = {
+  template: PackageTemplateDocument;
+  created_release: MaterialReleaseVersionDetail;
+};
+
+export type MaterialReleaseVersionItem = {
+  id: string;
+  material_id: string;
+  material_title: string;
+  version_number: string;
+  status: string;
+  note: string | null;
+  published_by: string | null;
+  published_at: string | null;
+  is_live: boolean;
+};
+
+export type MaterialReleaseVersionDetail = MaterialReleaseVersionItem & {
+  snapshot_json: Record<string, unknown>;
+};
+
+export type MaterialReleaseDeleteResult = {
+  id: string;
+  deleted: boolean;
+};
+
 export function loginAdmin(username: string, password: string) {
   return request<LoginResult>('/auth/login', {
     method: 'POST',
@@ -327,6 +417,88 @@ export function fetchMaterialJsonDocument(materialId: string) {
 
 export function getMaterialJsonExportUrl(materialId: string) {
   return `${API_BASE_URL}/materials/library/${materialId}/json`;
+}
+
+export function fetchPackageTemplate(materialId: string) {
+  return request<PackageTemplateDocument>(`/materials/library/${materialId}/template`);
+}
+
+export function savePackageTemplate(materialId: string, template: PackageTemplateDocument) {
+  return request<PackageTemplateSaveResult>(`/materials/library/${materialId}/template`, {
+    method: 'PUT',
+    body: template,
+  });
+}
+
+export function getPackageTemplateExportUrl(materialId: string) {
+  return `${API_BASE_URL}/materials/library/${materialId}/template`;
+}
+
+export function createPackageTemplate(template: PackageTemplateDocument) {
+  return request<PackageTemplateDocument>('/materials/library/template', {
+    method: 'POST',
+    body: template,
+  });
+}
+
+export function deletePackageTemplate(materialId: string) {
+  return request<PackageTemplateDeleteResult>(`/materials/library/${materialId}/template`, {
+    method: 'DELETE',
+  });
+}
+
+export function fetchMaterialReleaseVersions(materialId: string) {
+  return request<MaterialReleaseVersionItem[]>(`/materials/library/${materialId}/releases`);
+}
+
+export function fetchMaterialReleaseVersionDetail(materialId: string, releaseId: string) {
+  return request<MaterialReleaseVersionDetail>(`/materials/library/${materialId}/releases/${releaseId}`);
+}
+
+export function createMaterialReleaseVersion(
+  materialId: string,
+  payload: { note?: string | null; published_by?: string | null },
+) {
+  return request<MaterialReleaseVersionDetail>(`/materials/library/${materialId}/releases`, {
+    method: 'POST',
+    body: payload,
+  });
+}
+
+export function goLiveMaterialReleaseVersion(materialId: string, releaseId: string) {
+  return request<MaterialReleaseVersionDetail>(
+    `/materials/library/${materialId}/releases/${releaseId}/go-live`,
+    {
+      method: 'POST',
+      body: {},
+    },
+  );
+}
+
+export function archiveMaterialReleaseVersion(materialId: string, releaseId: string) {
+  return request<MaterialReleaseVersionDetail>(
+    `/materials/library/${materialId}/releases/${releaseId}/archive`,
+    {
+      method: 'POST',
+      body: {},
+    },
+  );
+}
+
+export function deleteMaterialReleaseVersion(materialId: string, releaseId: string) {
+  return request<MaterialReleaseDeleteResult>(`/materials/library/${materialId}/releases/${releaseId}`, {
+    method: 'DELETE',
+  });
+}
+
+export function restoreMaterialReleaseVersion(materialId: string, releaseId: string) {
+  return request<PackageTemplateSaveResult>(
+    `/materials/library/${materialId}/releases/${releaseId}/restore`,
+    {
+      method: 'POST',
+      body: {},
+    },
+  );
 }
 
 export function fetchMaterialUnits() {
