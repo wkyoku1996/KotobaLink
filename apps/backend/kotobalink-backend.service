@@ -1,0 +1,18 @@
+[Unit]
+Description=KotobaLink backend service
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/KotobaLink/apps/backend
+EnvironmentFile=/home/ec2-user/KotobaLink/apps/backend/.env
+ExecStart=/home/ec2-user/KotobaLink/apps/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
