@@ -33,6 +33,57 @@ sudo journalctl -u kotobalink-backend -n 100 --no-pager
 sudo journalctl -u kotobalink-backend -f
 ```
 
+## GitHub Actions auto deploy
+
+The repo includes a production deploy workflow:
+
+- `.github/workflows/deploy-backend.yml`
+
+This workflow runs on pushes to `main` when backend files change.
+
+It first runs backend tests in GitHub Actions:
+
+```bash
+cd apps/backend
+pip install -e .[dev]
+pytest
+```
+
+Only if the test job passes does it SSH into EC2 and run:
+
+```bash
+cd /home/ec2-user/KotobaLink
+git fetch origin main
+git reset --hard origin/main
+cd apps/backend
+python3 -m venv .venv   # only if missing
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install -e .
+sudo systemctl restart kotobalink-backend
+curl --fail --silent http://127.0.0.1:8000/health
+```
+
+Required GitHub repository secrets:
+
+- `EC2_HOST`: public server host or domain
+- `EC2_USER`: SSH user, for example `ec2-user`
+- `EC2_APP_DIR`: absolute repo path on EC2, for example `/home/ec2-user/KotobaLink`
+- `EC2_SSH_PRIVATE_KEY`: private key content for the deploy user
+
+Recommended EC2 sudoers rule so the deploy user can restart the backend non-interactively:
+
+```bash
+sudo visudo -f /etc/sudoers.d/kotobalink-deploy
+```
+
+Add:
+
+```text
+ec2-user ALL=(ALL) NOPASSWD:/bin/systemctl restart kotobalink-backend,/bin/systemctl is-active kotobalink-backend
+```
+
+If your EC2 host uses a different service name or user, adjust both the workflow and the sudoers entry together.
+
 ## Nginx reverse proxy
 
 The repo also includes an HTTP reverse proxy template:
