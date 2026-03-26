@@ -123,6 +123,15 @@ class MiniMyCourseListItem(BaseModel):
     lessonProgress: int
 
 
+class MiniMyCourseSummaryData(BaseModel):
+    lessonCompleted: int
+    lessonTotal: int
+    level: str
+    homeworkCompleted: int | None = None
+    homeworkTotal: int | None = None
+    pendingMakeups: int | None = None
+
+
 class MiniMyCourseDetailData(BaseModel):
     enrollment: MiniMyCourseListItem
     detail: MiniCourseDetailContent
@@ -138,6 +147,10 @@ class MiniCourseDetailResponse(ApiResponse):
 
 class MiniMyCourseListResponse(ApiResponse):
     data: list[MiniMyCourseListItem]
+
+
+class MiniMyCourseSummaryResponse(ApiResponse):
+    data: MiniMyCourseSummaryData
 
 
 class MiniMyCourseDetailResponse(ApiResponse):

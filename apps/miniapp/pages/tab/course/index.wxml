@@ -7,15 +7,15 @@
       <!-- 顶部蓝色卡片 -->
       <view class="hero-card">
         <view class="hero-title">学习进度总览</view>
-        <view class="hero-subtitle">已完成 {{demo.learningArchive.summary.lessonCompleted}} / {{demo.learningArchive.summary.lessonTotal}} 课时</view>
+        <view class="hero-subtitle">已完成 {{summary.lessonCompleted}} / {{summary.lessonTotal}} 课时</view>
         <view class="badge-row">
-          <text class="badge">已完成 {{demo.learningArchive.summary.homeworkCompleted}} / {{demo.learningArchive.summary.homeworkTotal}} 份作业</text>
-          <text class="badge" wx:if="{{demo.learningArchive.summary.pendingMakeups > 0}}">待补课 {{demo.learningArchive.summary.pendingMakeups}} 节</text>
-          <text class="badge">{{demo.student.level}}</text>
+          <text class="badge" wx:if="{{summary.homeworkCompleted !== null && summary.homeworkTotal !== null}}">已完成 {{summary.homeworkCompleted}} / {{summary.homeworkTotal}} 份作业</text>
+          <text class="badge" wx:if="{{summary.pendingMakeups > 0}}">待补课 {{summary.pendingMakeups}} 节</text>
+          <text class="badge" wx:if="{{summary.level}}">{{summary.level}}</text>
           <!-- 
             这里可以根据实际需求添加更多与课程相关的徽章，
             例如：当前学习阶段、最近一次考试成绩等。
-            暂时保留 student.level 作为通用学习状态。
+            这里优先展示后端返回的学习状态字段。
           -->
         </view>
       </view>

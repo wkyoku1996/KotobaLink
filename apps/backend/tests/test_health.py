@@ -183,6 +183,14 @@ def test_mini_my_courses_and_detail() -> None:
     assert len(detail_response.json()["data"]["detail"]["assessments"]) >= 1
 
 
+def test_mini_course_summary() -> None:
+    response = client.get("/api/v1/mini/me/course-summary")
+    assert response.status_code == 200
+    assert response.json()["data"]["lessonCompleted"] == 4
+    assert response.json()["data"]["lessonTotal"] >= 1
+    assert response.json()["data"]["level"] == "N4"
+
+
 def test_mini_assessment_detail() -> None:
     response = client.get("/api/v1/mini/me/courses/course-001/assessments/assessment-1")
     assert response.status_code == 200

@@ -56,6 +56,35 @@ async function getMyPublishedCourses() {
   }
 }
 
+async function getMyCourseSummary() {
+  try {
+    return await request('/mini/me/course-summary')
+  } catch (error) {
+    if (!ENABLE_DEMO_FALLBACK) {
+      console.error('[course-service] getMyCourseSummary failed without demo fallback', error)
+      return {
+        lessonCompleted: 0,
+        lessonTotal: 0,
+        level: '',
+        homeworkCompleted: null,
+        homeworkTotal: null,
+        pendingMakeups: null,
+      }
+    }
+
+    console.warn('[course-service] fallback to demo course summary', error)
+    const demo = getDemoData()
+    return {
+      lessonCompleted: demo.learningArchive.summary.lessonCompleted,
+      lessonTotal: demo.learningArchive.summary.lessonTotal,
+      level: demo.student.level,
+      homeworkCompleted: demo.learningArchive.summary.homeworkCompleted,
+      homeworkTotal: demo.learningArchive.summary.homeworkTotal,
+      pendingMakeups: demo.learningArchive.summary.pendingMakeups,
+    }
+  }
+}
+
 async function getMyPublishedCourseBundle(id) {
   try {
     return await request(`/mini/me/courses/${id}`)
@@ -132,6 +161,7 @@ async function getMyPublishedAssessmentDetail(courseId, assessmentId) {
 module.exports = {
   getPublishedCourses,
   getPublishedCourseBundle,
+  getMyCourseSummary,
   getMyPublishedCourses,
   getMyPublishedCourseBundle,
   getPublishedLessonDetail,

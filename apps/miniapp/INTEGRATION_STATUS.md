@@ -4,7 +4,7 @@ This file tracks which miniapp pages currently use backend APIs and which still 
 
 ## Backend-connected pages
 
-- `pages/tab/course/index`: mixed page, course lists from backend, top summary still reads demo state
+- `pages/tab/course/index`: backend
 - `pages/account/profile-course-detail/index`: backend
 - `pages/catalog/course-detail/index`: mixed page, course bundle from backend, purchase state and schedule lesson lookup still use demo state
 - `pages/learning/lesson-detail/index`: backend

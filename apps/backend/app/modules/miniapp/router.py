@@ -9,11 +9,13 @@ from app.modules.miniapp.schemas import (
     MiniCourseListResponse,
     MiniMyCourseDetailResponse,
     MiniMyCourseListResponse,
+    MiniMyCourseSummaryResponse,
 )
 from app.modules.miniapp.service import (
     get_live_assessment_detail,
     get_live_course_detail,
     get_live_lesson_detail,
+    get_my_course_summary,
     get_my_live_course_detail,
     list_live_courses,
     list_my_live_courses,
@@ -56,6 +58,11 @@ def read_live_assessment_detail(
 @router.get("/me/courses", response_model=MiniMyCourseListResponse)
 def read_my_live_courses(session: Session = Depends(get_db_session)) -> MiniMyCourseListResponse:
     return MiniMyCourseListResponse(data=list_my_live_courses(session))
+
+
+@router.get("/me/course-summary", response_model=MiniMyCourseSummaryResponse)
+def read_my_course_summary(session: Session = Depends(get_db_session)) -> MiniMyCourseSummaryResponse:
+    return MiniMyCourseSummaryResponse(data=get_my_course_summary(session))
 
 
 @router.get("/me/courses/{course_id}", response_model=MiniMyCourseDetailResponse)

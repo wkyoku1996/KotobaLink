@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.db.init_data import DEMO_STUDENT_ID
-from app.db.models import Course, Enrollment, MaterialReleaseVersion, TeachingMaterial
+from app.db.models import Course, Enrollment, MaterialReleaseVersion, Student, TeachingMaterial
 from app.modules.miniapp.schemas import (
     MiniAssessmentDetailData,
     MiniCourseAssessmentItem,
@@ -17,6 +17,7 @@ from app.modules.miniapp.schemas import (
     MiniLessonPracticeQuestion,
     MiniMyCourseDetailData,
     MiniMyCourseListItem,
+    MiniMyCourseSummaryData,
 )
 
 
@@ -89,6 +90,38 @@ def list_my_live_courses(session: Session) -> list[MiniMyCourseListItem]:
         )
         for enrollment in enrollments
     ]
+
+
+def get_my_course_summary(session: Session) -> MiniMyCourseSummaryData:
+    student = session.get(Student, DEMO_STUDENT_ID)
+    if student is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Demo student not found")
+
+    enrollments = (
+        session.execute(
+            select(Enrollment)
+            .options(selectinload(Enrollment.course))
+            .where(Enrollment.student_id == DEMO_STUDENT_ID)
+            .order_by(Enrollment.created_at.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    lesson_completed = sum(max(enrollment.lesson_progress, 0) for enrollment in enrollments)
+    lesson_total = 0
+    for enrollment in enrollments:
+        try:
+            release = _load_live_release_by_course_id(session, enrollment.course_id)
+        except HTTPException:
+            continue
+        lesson_total += len(_extract_units(_extract_course_snapshot(release.snapshot_json or {})))
+
+    return MiniMyCourseSummaryData(
+        lessonCompleted=lesson_completed,
+        lessonTotal=lesson_total,
+        level=student.level,
+    )
 
 
 def get_my_live_course_detail(session: Session, course_id: str) -> MiniMyCourseDetailData:

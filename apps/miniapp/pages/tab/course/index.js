@@ -1,11 +1,10 @@
-const { getDemoData } = require('../../../services/demo-service')
-const { getMyPublishedCourses, getPublishedCourses } = require('../../../services/course-service')
+const { getMyPublishedCourses, getPublishedCourses, getMyCourseSummary } = require('../../../services/course-service')
 const { withAccessibility } = require('../../../behaviors/with-accessibility')
 
 Page(withAccessibility({
   data: {
     enrolledCourses: [], // 我的课程
-    demo: {}, // 用于存放学生信息等通用数据
+    summary: {},
     purchasableCourses: [], // 可购买课程
   },
 
@@ -14,14 +13,14 @@ Page(withAccessibility({
   },
 
   async refreshCourses() {
-    const demoData = getDemoData()
-    const [myCourses, publishedCourses] = await Promise.all([
+    const [summary, myCourses, publishedCourses] = await Promise.all([
+      getMyCourseSummary(),
       getMyPublishedCourses(),
       getPublishedCourses(),
     ])
 
     this.setData({
-      demo: demoData,
+      summary,
       enrolledCourses: myCourses,
       purchasableCourses: publishedCourses,
     })
