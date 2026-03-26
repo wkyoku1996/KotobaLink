@@ -3,6 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@10.0.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "scripts": {
     "lint": "echo \"Define per-app lint commands as the workspace grows\"",
     "test": "echo \"Define per-app test commands as the workspace grows\"",

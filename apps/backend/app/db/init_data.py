@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 import wave
+from datetime import datetime, timezone
 from pathlib import Path
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
-from app.config.settings import get_media_root_path
+from app.config.settings import get_media_root_path, get_settings
 from app.db.base import Base
 from app.db.models import (
     Course,
     Enrollment,
     MaterialItem,
     MaterialPublishRecord,
+    MaterialReleaseVersion,
     MaterialUnit,
     MediaAsset,
     Order,
@@ -575,6 +577,33 @@ PUBLISH_RECORDS = [
     },
 ]
 
+INITIAL_RELEASES = [
+    {
+        "id": "material-release-001",
+        "material_id": "material-001",
+        "version_number": "v1",
+        "status": "live",
+        "note": "系统初始化导入的基线版本。",
+        "published_by": "ops_admin",
+    },
+    {
+        "id": "material-release-002",
+        "material_id": "material-002",
+        "version_number": "v1",
+        "status": "live",
+        "note": "系统初始化导入的基线版本。",
+        "published_by": "ops_admin",
+    },
+    {
+        "id": "material-release-003",
+        "material_id": "material-003",
+        "version_number": "v1",
+        "status": "live",
+        "note": "系统初始化导入的基线版本。",
+        "published_by": "ops_admin",
+    },
+]
+
 
 def seed_core_demo_data(session: Session) -> None:
     student = session.get(Student, DEMO_STUDENT_ID)
@@ -748,6 +777,9 @@ def seed_material_demo_data(session: Session) -> None:
         record.note = publish_data["note"]
         record.published_by = publish_data["published_by"]
 
+    session.flush()
+    _ensure_initial_material_release_versions(session, seed_material_ids)
+
     stray_publish_records = session.execute(
         select(MaterialPublishRecord).where(
             MaterialPublishRecord.material_id.in_(seed_material_ids),
@@ -842,6 +874,265 @@ def _write_demo_pdf(file_path: Path, label: str) -> None:
 def ensure_seed_data(session: Session) -> None:
     seed_core_demo_data(session)
     seed_material_demo_data(session)
+
+
+def _ensure_initial_material_release_versions(session: Session, seed_material_ids: set[str]) -> None:
+    release_by_material = {release["material_id"]: release for release in INITIAL_RELEASES}
+    for material_id in seed_material_ids:
+        existing_release = session.execute(
+            select(MaterialReleaseVersion.id)
+            .where(MaterialReleaseVersion.material_id == material_id)
+            .limit(1)
+        ).scalar_one_or_none()
+        if existing_release is not None:
+            continue
+
+        release_seed = release_by_material.get(material_id)
+        if release_seed is None:
+            continue
+
+        material = session.execute(
+            select(TeachingMaterial)
+            .options(
+                selectinload(TeachingMaterial.course),
+                selectinload(TeachingMaterial.units)
+                .selectinload(MaterialUnit.items)
+                .selectinload(MaterialItem.asset),
+            )
+            .where(TeachingMaterial.id == material_id)
+        ).scalar_one()
+
+        session.add(
+            MaterialReleaseVersion(
+                id=release_seed["id"],
+                material_id=material_id,
+                version_number=release_seed["version_number"],
+                status=release_seed["status"],
+                snapshot_json=_build_package_template_snapshot(material),
+                note=release_seed["note"],
+                published_by=release_seed["published_by"],
+                published_at=datetime.now(timezone.utc),
+                is_live=release_seed["status"] == "live",
+            )
+        )
+
+
+def _build_package_template_snapshot(material: TeachingMaterial) -> dict:
+    course = material.course or Course(
+        id=material.course_id or f"{material.id}-course",
+        name=material.title,
+        course_type="material_package",
+        duration=None,
+        price=0,
+        benefit=None,
+        summary=material.summary,
+        teacher="Unassigned",
+        class_type=None,
+        class_schedule=None,
+        classroom=None,
+        status=material.status,
+    )
+    settings = get_settings()
+
+    def build_resource(asset: MediaAsset) -> dict:
+        return {
+            "id": asset.id,
+            "file_name": asset.file_name,
+            "resource_type": asset.asset_type,
+            "mime_type": asset.mime_type,
+            "storage_key": asset.storage_key,
+            "file_url": f"{settings.media_url}/{asset.storage_key}".replace("//", "/"),
+            "visibility": asset.visibility,
+            "meta": {
+                "file_size": asset.file_size,
+                "duration_seconds": asset.duration_seconds,
+            },
+        }
+
+    return {
+        "schema_version": "kotobalink.package.v1",
+        "id": material.id,
+        "title": material.title,
+        "series": material.series,
+        "level": material.level,
+        "language": material.language,
+        "version": material.version,
+        "summary": material.summary,
+        "status": material.status,
+        "visibility": material.visibility,
+        "tags": [],
+        "courses": [
+            {
+                "id": course.id,
+                "title": course.name,
+                "status": course.status,
+                "summary": course.summary,
+                "units": [
+                    {
+                        "id": unit.id,
+                        "title": unit.title,
+                        "code": unit.code,
+                        "sort_order": unit.sort_order,
+                        "status": unit.status,
+                        "learning_goal": unit.learning_goal,
+                        "contents": [
+                            {
+                                "id": item.id,
+                                "type": _map_item_type_to_package_content_type(item.item_type),
+                                "title": item.title,
+                                "sort_order": item.sort_order,
+                                "enabled": True,
+                                "data": _build_package_content_data(item),
+                                "resources": [build_resource(item.asset)] if item.asset else [],
+                            }
+                            for item in sorted(unit.items, key=lambda current: current.sort_order)
+                        ],
+                    }
+                    for unit in sorted(material.units, key=lambda current: current.sort_order)
+                ],
+            }
+        ],
+    }
+
+
+def _map_item_type_to_package_content_type(item_type: str) -> str:
+    mapping = {
+        "audio": "dialogue",
+        "article": "article",
+        "reading": "article",
+        "worksheet": "resource",
+        "pdf": "resource",
+        "video": "resource",
+        "image": "resource",
+        "exercise": "exercise",
+        "homework": "homework",
+        "grammar": "grammar",
+        "vocabulary": "vocabulary",
+        "expression": "expression",
+        "resource": "resource",
+    }
+    return mapping.get(item_type, "resource")
+
+
+def _build_package_content_data(item: MaterialItem) -> dict:
+    asset_ref = item.asset.id if item.asset else None
+    section_type = _map_item_type_to_package_content_type(item.item_type)
+
+    if section_type == "dialogue":
+        return {
+            "transcript": item.content_text,
+            "translation": None,
+            "audio_refs": [asset_ref] if asset_ref else [],
+        }
+
+    if section_type == "article":
+        return {
+            "text": item.content_text,
+            "translation": None,
+            "asset_refs": [asset_ref] if asset_ref else [],
+        }
+
+    if section_type == "vocabulary":
+        return {
+            "items": _parse_vocabulary_lines(item.content_text),
+            "asset_refs": [asset_ref] if asset_ref else [],
+        }
+
+    if section_type == "grammar":
+        return {
+            "points": _parse_grammar_lines(item.content_text),
+            "asset_refs": [asset_ref] if asset_ref else [],
+        }
+
+    if section_type == "expression":
+        return {
+            "expressions": [
+                {
+                    "id": f"expression-{item.id}",
+                    "text": item.content_text,
+                }
+            ],
+            "asset_refs": [asset_ref] if asset_ref else [],
+        }
+
+    if section_type == "exercise":
+        return {
+            "questions": [],
+            "prompt": item.content_text,
+            "asset_ref": asset_ref,
+        }
+
+    if section_type == "homework":
+        return {
+            "tasks": [
+                {
+                    "id": f"task-{item.id}",
+                    "title": item.title,
+                    "description": item.content_text,
+                    "asset_refs": [asset_ref] if asset_ref else [],
+                }
+            ]
+        }
+
+    return {
+        "items": [
+            {
+                "id": f"resource-{item.id}",
+                "title": item.title,
+                "description": item.content_text,
+                "asset_ref": asset_ref,
+            }
+        ]
+    }
+
+
+def _parse_vocabulary_lines(content_text: str | None) -> list[dict]:
+    if not content_text:
+        return []
+
+    items: list[dict] = []
+    for index, line in enumerate(content_text.splitlines(), start=1):
+        parts = [part.strip() for part in line.split("|")]
+        if len(parts) < 3:
+            continue
+        word, reading, meaning = parts[:3]
+        example = parts[3] if len(parts) > 3 else None
+        items.append(
+            {
+                "id": f"vocab-{index}",
+                "word": word,
+                "reading": reading,
+                "meaning": meaning,
+                "example": example,
+            }
+        )
+    return items
+
+
+def _parse_grammar_lines(content_text: str | None) -> list[dict]:
+    if not content_text:
+        return []
+
+    points: list[dict] = []
+    for index, line in enumerate(content_text.splitlines(), start=1):
+        parts = [part.strip() for part in line.split("|")]
+        if len(parts) < 2:
+            continue
+        pattern = parts[0]
+        meaning = parts[1]
+        examples = []
+        if len(parts) > 2 and parts[2]:
+            examples = [example.strip() for example in parts[2].split(";") if example.strip()]
+        points.append(
+            {
+                "id": f"grammar-{index}",
+                "pattern": pattern,
+                "meaning": meaning,
+                "explanation": None,
+                "examples": examples,
+            }
+        )
+    return points
 
 
 def init_db() -> None:

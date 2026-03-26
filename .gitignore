@@ -5,6 +5,8 @@ node_modules/
 Thumbs.db
 dist/
 .env
+.env.local
+.env.*.local
 .venv/
 *.egg-info/
 __pycache__/
