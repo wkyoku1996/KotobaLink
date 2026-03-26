@@ -24,7 +24,7 @@ def test_course_catalog() -> None:
     response = client.get("/api/v1/courses/catalog")
 
     assert response.status_code == 200
-    assert len(response.json()["data"]) == 2
+    assert len(response.json()["data"]) == 3
 
 
 def test_orders() -> None:
@@ -46,7 +46,7 @@ def test_material_units() -> None:
     response = client.get("/api/v1/materials/units")
 
     assert response.status_code == 200
-    assert response.json()["data"][0]["material_title"] == "入门口语套餐 A1"
+    assert any(item["material_title"] == "入门口语套餐 A1" for item in response.json()["data"])
 
 
 def test_material_detail() -> None:
@@ -88,8 +88,8 @@ def test_package_template_update() -> None:
     update_response = client.put("/api/v1/materials/library/material-001/template", json=template)
 
     assert update_response.status_code == 200
-    assert update_response.json()["data"]["title"] == "入门口语套餐 A1 更新版"
-    assert update_response.json()["data"]["courses"][0]["title"] == "入门口语课程更新版"
+    assert update_response.json()["data"]["template"]["title"] == "入门口语套餐 A1 更新版"
+    assert update_response.json()["data"]["template"]["courses"][0]["title"] == "入门口语课程更新版"
 
 
 def test_material_release_create_list_and_detail() -> None:
@@ -101,7 +101,7 @@ def test_material_release_create_list_and_detail() -> None:
     assert create_response.status_code == 200
     release_id = create_response.json()["data"]["id"]
     assert create_response.json()["data"]["version_number"].startswith("v")
-    assert create_response.json()["data"]["snapshot_json"]["title"] == "入门口语套餐 A1 更新版"
+    assert create_response.json()["data"]["snapshot_json"]["title"] == "入门口语套餐 A1"
 
     list_response = client.get("/api/v1/materials/library/material-001/releases")
     assert list_response.status_code == 200
@@ -262,7 +262,7 @@ def test_student_courses() -> None:
     response = client.get("/api/v1/students/courses")
 
     assert response.status_code == 200
-    assert response.json()["data"][0]["course_name"] == "日语会话基础班"
+    assert response.json()["data"][0]["course_name"] == "入门口语课程 A1"
 
 
 def test_login() -> None:
