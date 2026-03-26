@@ -73,10 +73,11 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.EC2_HOST }}
         run: |
+          SSH_HOST_CLEAN="$(printf '%s' "$SSH_HOST" | tr -d '\r\n\t ')"
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$SSH_HOST_CLEAN" >> ~/.ssh/known_hosts
 
       - name: Deploy on EC2
         env:
@@ -84,9 +85,12 @@ jobs:
           SSH_USER: ${{ secrets.EC2_USER }}
           APP_DIR: ${{ secrets.EC2_APP_DIR }}
         run: |
-          ssh "$SSH_USER@$SSH_HOST" "bash -lc '
+          SSH_HOST_CLEAN="$(printf '%s' "$SSH_HOST" | tr -d '\r\n\t ')"
+          SSH_USER_CLEAN="$(printf '%s' "$SSH_USER" | tr -d '\r\n\t ')"
+          APP_DIR_CLEAN="$(printf '%s' "$APP_DIR" | tr -d '\r\n')"
+          ssh "$SSH_USER_CLEAN@$SSH_HOST_CLEAN" "bash -lc '
             set -e
-            cd \"$APP_DIR\"
+            cd \"$APP_DIR_CLEAN\"
             git fetch origin main
             git reset --hard origin/main
             cd apps/backend
