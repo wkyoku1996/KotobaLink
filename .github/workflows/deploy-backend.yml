@@ -74,8 +74,9 @@ jobs:
           SSH_HOST: ${{ secrets.EC2_HOST }}
         run: |
           SSH_HOST_CLEAN="$(printf '%s' "$SSH_HOST" | tr -d '\r\n\t ')"
+          SSH_PRIVATE_KEY_CLEAN="$(printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\r')"
           mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          printf '%s\n' "$SSH_PRIVATE_KEY_CLEAN" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "$SSH_HOST_CLEAN" >> ~/.ssh/known_hosts
 
