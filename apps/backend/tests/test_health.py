@@ -110,7 +110,7 @@ def test_material_release_create_list_and_detail() -> None:
     detail_response = client.get(f"/api/v1/materials/library/material-001/releases/{release_id}")
     assert detail_response.status_code == 200
     assert detail_response.json()["data"]["id"] == release_id
-    assert detail_response.json()["data"]["snapshot_json"]["courses"][0]["title"] == "入门口语课程更新版"
+    assert detail_response.json()["data"]["snapshot_json"]["courses"][0]["title"] == "入门口语课程 A1"
 
     second_create_response = client.post(
         "/api/v1/materials/library/material-001/releases",
