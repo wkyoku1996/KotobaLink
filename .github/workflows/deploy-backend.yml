@@ -103,6 +103,36 @@ jobs:
             fi
             .venv/bin/pip install --upgrade pip
             .venv/bin/pip install -e .
+            LEGACY_DB_STATE="$(
+              .venv/bin/python - <<'PY'
+from sqlalchemy import create_engine, inspect
+from app.config.settings import get_settings
+
+engine = create_engine(get_settings().database_url)
+tables = set(inspect(engine).get_table_names())
+has_alembic_version = "alembic_version" in tables
+legacy_tables = {
+    "students",
+    "courses",
+    "enrollments",
+    "orders",
+    "teaching_materials",
+    "material_units",
+    "media_assets",
+    "material_items",
+    "material_publish_records",
+    "material_release_versions",
+}
+
+if not has_alembic_version and tables.intersection(legacy_tables):
+    print("stamp")
+else:
+    print("upgrade")
+PY
+            )"
+            if [ "$LEGACY_DB_STATE" = "stamp" ]; then
+              .venv/bin/alembic stamp head
+            fi
             .venv/bin/alembic upgrade head
             sudo systemctl restart kotobalink-backend
             sudo systemctl is-active --quiet kotobalink-backend

@@ -66,6 +66,8 @@ curl --fail --silent http://127.0.0.1:8000/health
 
 The workflow also runs `alembic upgrade head` in CI before the backend test suite so schema migrations are validated before deployment.
 
+For legacy EC2 databases that were created before Alembic was introduced, the deploy workflow will first detect whether application tables already exist without an `alembic_version` table. In that one-time bootstrap case it runs `alembic stamp head` before the normal upgrade step so the existing schema can be brought under Alembic management safely.
+
 Required GitHub repository secrets:
 
 - `EC2_HOST`: public server host or domain
