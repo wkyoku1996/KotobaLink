@@ -83,10 +83,31 @@ sudo docker run -d \
 
 ## Optional GitHub Actions automation
 
-If you want auto deploy like the backend workflow, the EC2 host also needs:
+The repo now includes an admin deploy workflow:
+
+- `.github/workflows/deploy-admin.yml`
+
+It runs on pushes to `main` when admin or nginx files change.
+
+If you want to use it, the EC2 host also needs:
 
 - Docker installed and usable by the deploy user
 - nginx already configured once
 - The same repository path used by backend deploy
 
-The build arguments must point to the final public URL. If you later switch to HTTPS or a domain, rebuild the image with the new URL values.
+Required GitHub repository secrets:
+
+- `EC2_HOST`
+- `EC2_USER`
+- `EC2_APP_DIR`
+- `EC2_SSH_PRIVATE_KEY`
+- `ADMIN_PUBLIC_URL`: for example `http://aegislinks.site`
+
+The workflow will:
+
+- pull the latest `main`
+- rebuild the admin image with the configured public URL
+- restart the `kotobalink-admin` container
+- refresh nginx config and reload nginx
+
+If you later switch to HTTPS, update `ADMIN_PUBLIC_URL` to `https://...` and trigger the workflow again so the frontend is rebuilt with the new URL values.
