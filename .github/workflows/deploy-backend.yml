@@ -104,31 +104,7 @@ jobs:
             .venv/bin/pip install --upgrade pip
             .venv/bin/pip install -e .
             LEGACY_DB_STATE="$(
-              .venv/bin/python - <<'PY'
-from sqlalchemy import create_engine, inspect
-from app.config.settings import get_settings
-
-engine = create_engine(get_settings().database_url)
-tables = set(inspect(engine).get_table_names())
-has_alembic_version = "alembic_version" in tables
-legacy_tables = {
-    "students",
-    "courses",
-    "enrollments",
-    "orders",
-    "teaching_materials",
-    "material_units",
-    "media_assets",
-    "material_items",
-    "material_publish_records",
-    "material_release_versions",
-}
-
-if not has_alembic_version and tables.intersection(legacy_tables):
-    print("stamp")
-else:
-    print("upgrade")
-PY
+              .venv/bin/python -c "from sqlalchemy import create_engine, inspect; from app.config.settings import get_settings; tables = set(inspect(create_engine(get_settings().database_url)).get_table_names()); legacy_tables = {'students', 'courses', 'enrollments', 'orders', 'teaching_materials', 'material_units', 'media_assets', 'material_items', 'material_publish_records', 'material_release_versions'}; print('stamp' if 'alembic_version' not in tables and tables.intersection(legacy_tables) else 'upgrade')"
             )"
             if [ "$LEGACY_DB_STATE" = "stamp" ]; then
               .venv/bin/alembic stamp head
