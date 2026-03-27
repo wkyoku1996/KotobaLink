@@ -59,9 +59,12 @@ cd apps/backend
 python3 -m venv .venv   # only if missing
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -e .
+.venv/bin/alembic upgrade head
 sudo systemctl restart kotobalink-backend
 curl --fail --silent http://127.0.0.1:8000/health
 ```
+
+The workflow also runs `alembic upgrade head` in CI before the backend test suite so schema migrations are validated before deployment.
 
 Required GitHub repository secrets:
 

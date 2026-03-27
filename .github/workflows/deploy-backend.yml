@@ -54,6 +54,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      - name: Apply database migrations
+        run: alembic upgrade head
+
       - name: Initialize test database
         run: python -c "from app.db.init_data import init_db; init_db()"
 
@@ -100,6 +103,7 @@ jobs:
             fi
             .venv/bin/pip install --upgrade pip
             .venv/bin/pip install -e .
+            .venv/bin/alembic upgrade head
             sudo systemctl restart kotobalink-backend
             sudo systemctl is-active --quiet kotobalink-backend
             for attempt in 1 2 3 4 5 6 7 8 9 10; do
