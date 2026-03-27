@@ -92,33 +92,33 @@ jobs:
           SSH_HOST_CLEAN="$(printf '%s' "$SSH_HOST" | tr -d '\r\n\t ')"
           SSH_USER_CLEAN="$(printf '%s' "$SSH_USER" | tr -d '\r\n\t ')"
           APP_DIR_CLEAN="$(printf '%s' "$APP_DIR" | tr -d '\r\n')"
-          ssh "$SSH_USER_CLEAN@$SSH_HOST_CLEAN" "bash -lc '
-            set -e
-            cd \"$APP_DIR_CLEAN\"
-            git fetch origin main
-            git reset --hard origin/main
-            cd apps/backend
-            if [ ! -d .venv ]; then
-              python3 -m venv .venv
+          ssh "$SSH_USER_CLEAN@$SSH_HOST_CLEAN" "APP_DIR_CLEAN='$APP_DIR_CLEAN' bash -s" <<'EOF'
+          set -e
+          cd "$APP_DIR_CLEAN"
+          git fetch origin main
+          git reset --hard origin/main
+          cd apps/backend
+          if [ ! -d .venv ]; then
+            python3 -m venv .venv
+          fi
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -e .
+          LEGACY_DB_STATE="$(
+            .venv/bin/python -c "from sqlalchemy import create_engine, inspect; from app.config.settings import get_settings; tables = set(inspect(create_engine(get_settings().database_url)).get_table_names()); legacy_tables = {'students', 'courses', 'enrollments', 'orders', 'teaching_materials', 'material_units', 'media_assets', 'material_items', 'material_publish_records', 'material_release_versions'}; print('stamp' if 'alembic_version' not in tables and tables.intersection(legacy_tables) else 'upgrade')"
+          )"
+          if [ "$LEGACY_DB_STATE" = "stamp" ]; then
+            .venv/bin/alembic stamp head
+          fi
+          .venv/bin/alembic upgrade head
+          sudo systemctl restart kotobalink-backend
+          sudo systemctl is-active --quiet kotobalink-backend
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:8000/health > /dev/null; then
+              exit 0
             fi
-            .venv/bin/pip install --upgrade pip
-            .venv/bin/pip install -e .
-            LEGACY_DB_STATE="\$(
-              .venv/bin/python -c \"from sqlalchemy import create_engine, inspect; from app.config.settings import get_settings; tables = set(inspect(create_engine(get_settings().database_url)).get_table_names()); legacy_tables = {'students', 'courses', 'enrollments', 'orders', 'teaching_materials', 'material_units', 'media_assets', 'material_items', 'material_publish_records', 'material_release_versions'}; print('stamp' if 'alembic_version' not in tables and tables.intersection(legacy_tables) else 'upgrade')\"
-            )"
-            if [ "\$LEGACY_DB_STATE" = "stamp" ]; then
-              .venv/bin/alembic stamp head
-            fi
-            .venv/bin/alembic upgrade head
-            sudo systemctl restart kotobalink-backend
-            sudo systemctl is-active --quiet kotobalink-backend
-            for attempt in 1 2 3 4 5 6 7 8 9 10; do
-              if curl --fail --silent http://127.0.0.1:8000/health > /dev/null; then
-                exit 0
-              fi
-              sleep 3
-            done
-            sudo systemctl status kotobalink-backend --no-pager
-            sudo journalctl -u kotobalink-backend -n 50 --no-pager
-            exit 1
-          '"
+            sleep 3
+          done
+          sudo systemctl status kotobalink-backend --no-pager
+          sudo journalctl -u kotobalink-backend -n 50 --no-pager
+          exit 1
+          EOF
